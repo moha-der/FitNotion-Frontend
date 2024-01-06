@@ -17,6 +17,8 @@ const config: Config = {
           500: '#0070F3',
           600: '#2F6FEB',
         },
+        cardOverlay: "rgba(256, 256, 256, 0.4)",
+        webColor: '#4caf50',
       },
     },
     keyframes: {
