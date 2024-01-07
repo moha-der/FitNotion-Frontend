@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 export default function Page() {
   return (
     <main className="grid grid-rows-1 min-h-screen p-6 bg-gray-50 ">
-      <div className='grid grid-cols-10 gap-4 mx-auto'>
+      <div className='grid grid-cols-10 gap-2 mx-auto'>
           <div className='col-span-10 md:col-span-5 min-w-full'>
             <div className='flex flex-col items-center py-4 px-5'>
               <h1 className='text-3xl sm:text-4xl lg:text-6xl font-bold'>Equilibra tu Plato <br/> Equilibra tu Vida</h1>
