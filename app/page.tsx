@@ -28,7 +28,7 @@ export default function Page() {
     <section className='p-6 lg:max-w-6xl mx-auto'>
        <div className='grid grid-rows-1 place-items-center'>
           <div className='grid grid-cols-1'>
-              <h2 className='text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center'>
+              <h2 className='text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center'>
                 Herramientas para conseguir tus objetivos
               </h2>
           </div>
@@ -42,7 +42,7 @@ export default function Page() {
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-2xl font-bold'>
+                    <h4 className='text-xl md:text-2xl font-bold'>
                       Registra y aprende
                     </h4>
                     <p className='my-4 text-lg font-normal'>
@@ -57,7 +57,7 @@ export default function Page() {
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-2xl font-bold'>
+                    <h4 className='text-xl md:text-2xl font-bold'>
                       Consigue tus metas
                     </h4>
                     <p className='my-4 text-lg font-normal'>
@@ -68,11 +68,11 @@ export default function Page() {
               <div className='col-span-12 sm:col-start-4 sm:col-span-6 md:col-span-4 p-4'>
                   <div className='flex flex-col items-center my-4'>
                     <span className='bg-webColor w-20 h-20 rounded-full flex flex-col justify-center items-center shadow-[rgba(0,_0,_0,_0.2)_0px_20px_10px_-7px]'>
-                      <StarIcon className="h-10 w-10 rounded-3xl  text-white" />
+                      <StarIcon className="h-10 w-10 rounded-3xl text-white" />
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-2xl font-bold'>
+                    <h4 className='text-xl md:text-2xl font-bold'>
                       Asesoramiento experto
                     </h4>
                     <p className='my-4 text-lg font-normal'>
