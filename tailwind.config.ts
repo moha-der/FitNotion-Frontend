@@ -19,6 +19,7 @@ const config: Config = {
         },
         cardOverlay: "rgba(256, 256, 256, 0.4)",
         webColor: '#4caf50',
+        footerColor: '#388e3c'
       },
     },
     keyframes: {

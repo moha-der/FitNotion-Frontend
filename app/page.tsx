@@ -86,14 +86,14 @@ export default function Page() {
     </section>
     <section className='p-6 lg:max-w-6xl mx-auto'>
       <div className='grid grid-rows-1 place-items-center'>
-          <div className='grid grid-cols-12 gap-4'>
-              <div className='col-span-6' >
+          <div className='grid grid-cols-12 gap-2 md:gap-4'>
+              <div className='col-span-12 md:col-span-6 px-4 md:p-6' >
                 <Image className='rounded-3xl md:flex md:flex-col md:items-center' src={Banner2} alt={'Texto'} />
               </div>
-              <div className='col-span-6 place-self-center'>
-                  <div className='flex flex-col items-start justify-center p-6'>
-                    <h2 className='text-3xl font-bold'>Evalúa y monitorea a tus pacientes</h2>
-                    <p className='text-xl my-4'>Gracias a nuestra plataforma, podrás crear planes de alimentación personalizado
+              <div className='col-span-12 md:col-span-6 place-self-center'>
+                  <div className='flex flex-col items-start justify-center px-6 py-4 md:p-6'>
+                    <h2 className='text-xl sm:text-2xl md:text-3xl font-bold'>Evalúa y monitorea a tus pacientes</h2>
+                    <p className='text-base sm:text-lg md:text-xl my-4'>Gracias a nuestra plataforma, podrás crear planes de alimentación personalizado
                       s y enviarlos directamente a tus pacientes, quienes podrán registrar sus comidas
                       y mantener un control diario de su ingesta de nutrientes.
                     </p>
