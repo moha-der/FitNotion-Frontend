@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { lusitana } from '@/app/ui/fonts';
 import Image from 'next/image';
 import Banner from 'public/images/banner.png'
+import Banner2 from 'public/images/seccion-home.jpg'
 import { Button } from './ui/button';
 
 export default function Page() {
@@ -42,10 +43,10 @@ export default function Page() {
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-xl md:text-2xl font-bold'>
+                    <h4 className='text-lg md:text-2xl font-bold'>
                       Registra y aprende
                     </h4>
-                    <p className='my-4 text-lg font-normal'>
+                    <p className='my-4 text-base font-normal'>
                       Puedes realizar un seguimiento de tu ingesta diaria y ajustar tu dieta según tus objetivos de salud
                     </p>
                   </div>
@@ -57,10 +58,10 @@ export default function Page() {
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-xl md:text-2xl font-bold'>
+                    <h4 className='text-lg md:text-2xl font-bold'>
                       Consigue tus metas
                     </h4>
-                    <p className='my-4 text-lg font-normal'>
+                    <p className='my-4 text-base font-normal'>
                       Gracias a nuestra herramienta puedes ver tu progreso y así alcanzar tus objetivos
                     </p>
                   </div>
@@ -72,16 +73,34 @@ export default function Page() {
                     </span>
                   </div>
                   <div className='flex flex-col items-center my-4'>
-                    <h4 className='text-xl md:text-2xl font-bold'>
+                    <h4 className='text-lg md:text-2xl font-bold'>
                       Asesoramiento experto
                     </h4>
-                    <p className='my-4 text-lg font-normal'>
+                    <p className='my-4 text-base font-normal'>
                       Con nuestra herramienta puedes interaccionar con nutricionistas y obtener un feedback de los mismos
                     </p>
                   </div>
               </div>
           </div>
        </div>
+    </section>
+    <section className='p-6 lg:max-w-6xl mx-auto'>
+      <div className='grid grid-rows-1 place-items-center'>
+          <div className='grid grid-cols-12 gap-4'>
+              <div className='col-span-6' >
+                <Image className='rounded-3xl md:flex md:flex-col md:items-center' src={Banner2} alt={'Texto'} />
+              </div>
+              <div className='col-span-6 place-self-center'>
+                  <div className='flex flex-col items-start justify-center p-6'>
+                    <h2 className='text-3xl font-bold'>Evalúa y monitorea a tus pacientes</h2>
+                    <p className='text-xl my-4'>Gracias a nuestra plataforma, podrás crear planes de alimentación personalizado
+                      s y enviarlos directamente a tus pacientes, quienes podrán registrar sus comidas
+                      y mantener un control diario de su ingesta de nutrientes.
+                    </p>
+                  </div>
+              </div>
+          </div>
+      </div>
     </section>
 
     
