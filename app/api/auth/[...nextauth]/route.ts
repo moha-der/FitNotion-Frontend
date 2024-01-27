@@ -17,30 +17,33 @@ const authOptions = {
                 password: {label: "Password", type:"password"}
             },
             async authorize(credentials) {
-                
-                try {
-                    const response = await axios.post('http://fitnotionapi.somee.com/api/Account/Login', credentials);
 
-                    if (response.data.status == 'OK') {
-                        const user : any = {
+                try {
+                    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Login`, credentials);
+
+
+                    if (response.data.msg == 'OK') {
+                        const user: any = {
                             token: response.data.token,
                             permiso: response.data.permiso,
                             email: response.data.email
                         }
+    
                         return user;
                     }
                     return null;
+
                 } catch (e: any) {
-                    return null;
+                    throw e;
                 }
             }
         })
     ],
     callbacks: {
-        async jwt({ token, user}: { token: any; user: any }) {
+        async jwt({ token, user} : {token: any, user: any}) {
           return { ...token, ...user };
         },
-        async session({ session, token }: { session: any; token: any }) {
+        async session({ session, token } : {session: any, token: any}) {
           session.user = token as any;
           return session;
         },
