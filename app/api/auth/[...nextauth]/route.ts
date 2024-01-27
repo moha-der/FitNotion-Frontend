@@ -2,6 +2,11 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import axios from 'axios'
 
+interface User {
+    email: string;
+    token: string;
+    permiso: string;
+}
 
 const authOptions = {
     providers: [
@@ -12,23 +17,30 @@ const authOptions = {
                 password: {label: "Password", type:"password"}
             },
             async authorize(credentials) {
-                console.log(credentials)
-                const response = await axios.post('http://fitnotionapi.somee.com/api/Account/Login', credentials);
-
                 
-                return {
-                    token: response.data.token,
-                    permiso: response.data.permiso,
-                    email: response.data.email
-                };
+                try {
+                    const response = await axios.post('http://fitnotionapi.somee.com/api/Account/Login', credentials);
+
+                    if (response.data.status == 'OK') {
+                        const user : any = {
+                            token: response.data.token,
+                            permiso: response.data.permiso,
+                            email: response.data.email
+                        }
+                        return user;
+                    }
+                    return null;
+                } catch (e: any) {
+                    return null;
+                }
             }
         })
     ],
     callbacks: {
-        async jwt({ token, user}) {
+        async jwt({ token, user}: { token: any; user: any }) {
           return { ...token, ...user };
         },
-        async session({ session, token }) {
+        async session({ session, token }: { session: any; token: any }) {
           session.user = token as any;
           return session;
         },
