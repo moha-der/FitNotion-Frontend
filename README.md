@@ -1,5 +1,8 @@
-## Next.js App Router Course - Starter
+## FrontEnd para FitNotion
 
-This is the starter template for the Next.js App Router Course. It contains the starting code for the dashboard application.
+--- Instalar 
+npm i
 
-For more information, see the [course curriculum](https://nextjs.org/learn) on the Next.js Website.
+--- Ejecutar la aplicación
+npm run dev
+
