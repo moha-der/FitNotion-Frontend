@@ -6,10 +6,9 @@ import Hero from 'public/images/login.png'
 import HeroMobile from 'public/images/HeroMobile.svg'
 import { useState } from 'react';
 import { signIn } from "next-auth/react";
-import axios from 'axios'
 import { useRouter } from "next/navigation";
 
-const page = () => {
+export default function Register() {
 
     const [email, setEmail] = useState<string>();
     const [password, setPassword] = useState<string>();
@@ -165,5 +164,3 @@ const page = () => {
             </div>
   )
 }
-
-export default page

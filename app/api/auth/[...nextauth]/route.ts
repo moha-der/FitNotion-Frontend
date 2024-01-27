@@ -15,6 +15,7 @@ const authOptions = {
                 console.log(credentials)
                 const response = await axios.post('http://fitnotionapi.somee.com/api/Account/Login', credentials);
 
+                
                 return {
                     token: response.data.token,
                     permiso: response.data.permiso,
