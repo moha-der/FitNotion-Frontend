@@ -34,7 +34,7 @@ export default function Register() {
 
     
 
-        const response = await fetch('http://fitnotionapi.somee.com/api/Account/Register', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
