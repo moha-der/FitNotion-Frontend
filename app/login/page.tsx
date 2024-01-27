@@ -1,19 +1,50 @@
+'use client'
 import Image from 'next/image';
 import Link from 'next/link';
 import Hero from 'public/images/login.png'
 import HeroMobile from 'public/images/HeroMobile.svg'
+import { useSession } from "next-auth/react"
+import { useState } from 'react';
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+  
 
 export default function Login() {
-    return (
-        <>
+    const { data: session, status } = useSession();
 
+    const [email, setEmail] = useState<string>();
+    const [password, setPassword] = useState<string>();
+    const [errors, setErrors] = useState<string[]>([]);
+
+    const router = useRouter();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+    
+        const responseNextAuth = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+    
+        if (responseNextAuth?.error) {
+          setErrors(responseNextAuth.error.split(","));
+          return;
+        }
+    
+        router.push("/panel");
+    };
+
+    return (
             <div className="flex flex-wrap w-full">
                 <div className="flex flex-col w-full md:w-1/2">
                     <div className="flex flex-col justify-center px-8 pt-8 my-auto md:justify-start md:pt-0 md:px-24 lg:px-32">
                         <div className="mb-4 md:hidden">
                             <Image src={HeroMobile} alt='texto' />
+                            <h4 className='text-center mt-4 text-lg font-medium'>Accede a tu cuenta</h4>
                         </div>
-                        <form className="flex flex-col pt-3 md:pt-8">
+                        <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleSubmit}>
                             <div className="flex flex-col pt-4">
                                 <div className="flex relative ">
                                     <span className=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
@@ -22,7 +53,7 @@ export default function Login() {
                                             </path>
                                         </svg>
                                     </span>
-                                    <input type="text" id="design-login-email" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Email" />
+                                    <input type="text" id="design-login-email" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Email" name="email" value={email} onChange={(event) => setEmail(event.target.value)} />
                                 </div>
                             </div>
                             <div className="flex flex-col pt-4 mb-12">
@@ -33,7 +64,7 @@ export default function Login() {
                                             </path>
                                         </svg>
                                     </span>
-                                    <input type="password" id="design-login-password" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Password" />
+                                    <input type="password" id="design-login-password" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Password" name="password" value={password} onChange={(event) => setPassword(event.target.value)} />
                                 </div>
                             </div>
                             <button type="submit" className="w-full px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-webColor shadow-md hover:text-black hover:bg-white focus:outline-none focus:ring-2">
@@ -61,18 +92,25 @@ export default function Login() {
                         <div className="pt-12 pb-12 text-center">
                             <p>
                                 ¿Todavía no eres usuario?
-                                <Link href="#" className="font-semibold underline ml-1">
+                                <Link href="/register" className="font-semibold underline ml-1">
                                     ¡Regístrate ahora!
                                 </Link>
                             </p>
                         </div>
+                        {errors.length > 0 && (
+                            <div className="alert alert-danger mt-2">
+                                <ul className="mb-0">
+                                    {errors.map((error) => (
+                                    <li key={error}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="hidden md:block md:w-1/2 shadow-2xl">
                     <Image className="hidden object-cover w-full h-screen md:block" src={Hero} alt='texto login' />
                 </div>
             </div>
-
-        </>
     );
 }
