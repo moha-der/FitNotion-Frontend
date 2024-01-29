@@ -1,13 +1,21 @@
 import { z } from 'zod';
 
 export const userValidation = z.object( {
-    name: z
+    nombre: z
     .string()
     .min(3, {
       message: "El nombre tiene que tener mínimo 3 carácteres",
     })
     .max(200, {
       message: "El nombre tiene que tener máximo 200 carácteres",
+    }),
+    apellidos: z
+    .string()
+    .min(3, {
+      message: "Los apellidos tiene que tener mínimo 3 carácteres",
+    })
+    .max(200, {
+      message: "Los apellidos tiene que tener máximo 200 carácteres",
     }),
     email: z.string().email({
         message: "Introduce un email válido",
@@ -24,13 +32,10 @@ export const userValidation = z.object( {
     confirmPassword: z.string().min(6, {
         message: "La contraseña tiene que tener más de 6 carácteres",
     }),
-    weight: z.string().refine((weight) => !isNaN(parseFloat(weight)), {
-        message: "Weight must be a number",
-    }),
-    dateOfBirth: z.string().refine(dob => new Date(dob).toString() !== "Invalid Date", {
-        message: "Please enter a valid date of birth"
+    fechaNac: z.string().refine(dob => new Date(dob).toString() !== "Invalid Date", {
+        message: "Introduzca una fecha de nacimiento válida"
     }),
 }).refine(data => data.password === data.confirmPassword, {
-    message: "Passwords must match",
+    message: "Las contraseñas no coinciden",
     path: ["confirmPassword"]
 })

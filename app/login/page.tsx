@@ -3,39 +3,77 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Hero from 'public/images/login.png'
 import HeroMobile from 'public/images/HeroMobile.svg'
-import { useSession } from "next-auth/react"
-import { useState } from 'react';
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { userValidation } from '../validations/userValidation';
+import bcrypt from "bcryptjs"
 
-  
+type Inputs = {
+    email: string;
+    password: string;
+};
 
 export default function Login() {
-    const { data: session, status } = useSession();
 
-    const [email, setEmail] = useState<string>();
-    const [password, setPassword] = useState<string>();
-    const [errors, setErrors] = useState<string[]>([]);
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<Inputs>({
+        resolver: zodResolver(userValidation),
+    });
 
     const router = useRouter();
 
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        console.log(data)
+        const email = data.email;
+        //const password = await bcrypt.hash(data.password, 10);
+        const password = data
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    
+        console.log(data)
+        
+
         const responseNextAuth = await signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        });
-    
-        if (responseNextAuth?.error) {
-          setErrors(responseNextAuth.error.split(","));
-          return;
-        }
-    
-        router.push("/panel");
+            email,
+            password,
+            redirect: false,
+          });
+      
+          if (responseNextAuth?.error) {
+            console.log(responseNextAuth.error);
+            return;
+          }
+      
+          router.push("/panel");
+
     };
+
+    const handleSubmit2 = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const email = watch().email;
+        //const password = bcrypt.hashSync(watch().password, 10);
+        const password = watch().password;
+
+        const responseNextAuth = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        });
+
+        if (responseNextAuth?.error) {
+            console.log(responseNextAuth.error);
+            return;
+          }
+      
+          router.push("/panel");
+    };
+
 
     return (
             <div className="flex flex-wrap w-full">
@@ -45,7 +83,7 @@ export default function Login() {
                             <Image src={HeroMobile} alt='texto' />
                             <h4 className='text-center mt-4 text-lg font-medium'>Accede a tu cuenta</h4>
                         </div>
-                        <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleSubmit}>
+                        <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleSubmit2}>
                             <div className="flex flex-col pt-4">
                                 <div className="flex relative ">
                                     <span className=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
@@ -54,8 +92,9 @@ export default function Login() {
                                             </path>
                                         </svg>
                                     </span>
-                                    <input type="text" id="design-login-email" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Email" name="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+                                    <input type="email" id="email" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Email"  {...register("email")} />
                                 </div>
+                                {errors.email?.message && <p className='text-red-700 texto-errores'>{errors.email?.message}</p>}
                             </div>
                             <div className="flex flex-col pt-4 mb-12">
                                 <div className="flex relative ">
@@ -65,8 +104,9 @@ export default function Login() {
                                             </path>
                                         </svg>
                                     </span>
-                                    <input type="password" id="design-login-password" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Password" name="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+                                    <input type="password" id="password" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Password" {...register("password")} />
                                 </div>
+                                {errors.password?.message && <p className='text-red-700 texto-errores'>{errors.password?.message}</p>}
                             </div>
                             <button type="submit" className="w-full px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-webColor shadow-md hover:text-black hover:bg-white focus:outline-none focus:ring-2">
                                 <span className="w-full">
@@ -98,15 +138,6 @@ export default function Login() {
                                 </Link>
                             </p>
                         </div>
-                        {errors.length > 0 && (
-                            <div className="alert alert-danger mt-2">
-                                <ul className="mb-0">
-                                    {errors.map((error) => (
-                                    <li key={error}>{error}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
                     </div>
                 </div>
                 <div className="hidden md:block md:w-1/2 shadow-2xl">

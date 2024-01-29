@@ -17,3 +17,6 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
+.texto-errores {
+  font-size: 12px;
+}

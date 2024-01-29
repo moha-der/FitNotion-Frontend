@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-    <footer className="bg-webColor dark:bg-footerColor w-full py-8 mt-8 relative bottom-0">
+    <footer className="bg-webColor dark:bg-footerColor w-full py-8 relative bottom-0">
             <div className="max-w-screen-xl px-4 mx-auto">
                 <ul className="flex flex-col items-center sm:flex-row flex-wrap justify-between max-w-screen-md mx-auto text-lg font-light">
                     <li className="my-2">

@@ -18,6 +18,8 @@ const authOptions = {
             },
             async authorize(credentials) {
 
+                console.log(credentials)
+
                 try {
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Login`, credentials);
 
