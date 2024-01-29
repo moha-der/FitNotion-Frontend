@@ -11,6 +11,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userValidation } from '../validations/userValidation';
 import bcrypt from "bcryptjs"
+import axios from 'axios';
 
 type Inputs = {
     nombre: string;
@@ -50,13 +51,7 @@ export default function Register() {
             tipo_usuario: 1
         }
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(usuario),
-        });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, usuario );
 
      
         const responseNextAuth = await signIn("credentials", {
