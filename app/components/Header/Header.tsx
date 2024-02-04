@@ -16,7 +16,7 @@ export default function Header() {
                 <a className={`${NewRocker.className} antialiased text-3xl text-webColor italic`}>FitNotion</a>
                 <div className="flex flex-row justify-center items-center">
                     <NavLinks Mobile={false}/>
-                    <Link href={'/'} className="text-xs uppercase text-white font-medium ml-2 px-4 py-2 bg-webColor rounded-full">Iniciar Sesión</Link>
+                    <Link href={'/login'} className="text-xs uppercase text-white font-medium ml-2 px-4 py-2 bg-webColor rounded-full">Iniciar Sesión</Link>
                 </div>
             </div>
             {/* Movil */}

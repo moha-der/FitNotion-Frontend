@@ -83,6 +83,10 @@ export default function Login() {
                             <Image src={HeroMobile} alt='texto' />
                             <h4 className='text-center mt-4 text-lg font-medium'>Accede a tu cuenta</h4>
                         </div>
+                        <div className="hidden md:flex md:flex-col md:items-center md:mx-auto md:max-w-sm">
+                            <Image src={HeroMobile} alt='texto' />
+                            <h4 className='text-center mt-4 text-lg font-medium'>Accede a tu cuenta</h4>
+                        </div>
                         <form className="flex flex-col pt-3 md:pt-8" onSubmit={handleSubmit2}>
                             <div className="flex flex-col pt-4">
                                 <div className="flex relative ">
