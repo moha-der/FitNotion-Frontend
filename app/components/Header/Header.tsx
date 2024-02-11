@@ -12,7 +12,7 @@ export default function Header() {
     return (
         <div className="w-screen bg-cardOverlay backdrop-blur-md md:p-3 md:px-4 lg:px-16 shadow-md border-b">
             {/* Tablets y Escritorio */}
-            <div className="hidden md:flex w-full justify-between items-center">
+            <div className="container mx-auto hidden md:flex w-full justify-between items-center">
                 <a className={`${NewRocker.className} antialiased text-3xl text-webColor italic`}>FitNotion</a>
                 <div className="flex flex-row justify-center items-center">
                     <NavLinks Mobile={false}/>
