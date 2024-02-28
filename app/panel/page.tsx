@@ -3,8 +3,13 @@ import React, { useState } from 'react'
 import ButtonAuth from '../components/SignOut/SignOut';
 import EatTime from '../ui/EatTimeCard';
 
-export default function Panel() {
+type SearchParamProps = {
+  searchParams: Record<string, string> | null | undefined;
+};
+
+export default function Panel({ searchParams } : SearchParamProps) {
   const [fecha, setFecha] = useState(new Date());
+  const show = searchParams?.show;
 
 
   const restaDia = () => {
@@ -61,11 +66,11 @@ export default function Panel() {
             </div>
           </div>
         </div>
-        <EatTime title='Desayuno' />
-        <EatTime title='Almuerzo' />
-        <EatTime title='Comida' />
-        <EatTime title='Merienda' />
-        <EatTime title='Cena' />
+        <EatTime title='Desayuno' param={show} />
+        <EatTime title='Almuerzo' param={show} />
+        <EatTime title='Comida'  param={show}/>
+        <EatTime title='Merienda' param={show}/>
+        <EatTime title='Cena' param={show}/>
       </div>
       <ButtonAuth />
     </div>
