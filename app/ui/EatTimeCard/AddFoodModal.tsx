@@ -3,7 +3,7 @@ import Link from "next/link";
 import SearchResult from "./SearchResult";
 import { useState } from "react";
 
-export default function FoodModal() {
+export default function AddFoodModal() {
 
     const [inputValue, setInputValue] = useState("");
     const [buscar, setBuscar] = useState(false);

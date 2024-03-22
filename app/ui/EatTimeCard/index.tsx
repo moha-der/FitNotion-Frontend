@@ -18,6 +18,7 @@ export default function EatTime({
                 <a className='px-4 py-2 text-blue-500 ' href="/panel?show=true">Agregar alimento</a>
             </div>
             {param && <FoodModal />}
+            
         </>
     );
 }
