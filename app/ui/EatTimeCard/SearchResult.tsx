@@ -53,7 +53,10 @@ export default function SearchResult({
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuantity(e.target.value);
+        const inputValue: string = e.target.value; // Assuming the input value is a string
+        const parsedValue: number = parseFloat(inputValue); // Parse string to float
+        setQuantity(parsedValue);
+        
     };
 
     const handleSubmit = async(e: React.FormEvent) => {
@@ -74,7 +77,7 @@ export default function SearchResult({
                 email: "prueba@gmail.com", // Reemplaza esto con el correo del usuario
                 tipoComida: "Desayuno", // Tipo de comida (por ejemplo: desayuno, almuerzo, cena)
                 fecha: new Date().toISOString(), // Fecha actual
-                cantidad: parseFloat(quantity), // Cantidad de la ración
+                cantidad: quantity, // Cantidad de la ración
             });
         } catch (error) {
             console.error("Error al enviar los datos al backend:", error);
