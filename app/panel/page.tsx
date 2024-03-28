@@ -1,15 +1,51 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ButtonAuth from '../components/SignOut/SignOut';
 import EatTime from '../ui/EatTimeCard';
+import { useSession } from "next-auth/react";
+import { TiposComida } from '../types/TiposComida';
+
 
 type SearchParamProps = {
   searchParams: Record<string, string> | null | undefined;
 };
 
-export default function Panel({ searchParams } : SearchParamProps) {
+export default function Panel({ searchParams }: SearchParamProps) {
   const [fecha, setFecha] = useState(new Date());
   const show = searchParams?.show;
+  const tipo = searchParams?.tipo;
+  const [comidas, setComidas] = useState <TiposComida[]>([]);
+  const { data: session, status } = useSession();
+  const [renderizarDatos, setRenderizarDatos] = useState(false);
+
+  const email = session ? session.user?.email : null
+
+  const dia = String(fecha.getDate()).padStart(2, '0')
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0')
+  const anio = fecha.getFullYear()
+
+  const fechaFormateada = `${dia}-${mes}-${anio}`
+
+  useEffect(() => {
+    if (!email) return;
+    async function fetchComidas() {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL2}/Alimentos/getAlimentosDia?email=${email}&fecha=${fechaFormateada}`);
+        if (response.ok) {
+          const data = await response.json();
+          setComidas(data);
+        } else {
+          console.error('Error al obtener las comidas:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al obtener las comidas:', error);
+      }
+    }
+
+    fetchComidas();
+
+  }, [email, fechaFormateada, renderizarDatos]);
+
 
 
   const restaDia = () => {
@@ -22,6 +58,11 @@ export default function Panel({ searchParams } : SearchParamProps) {
 
   const weekdays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   const FechaFormateada = weekdays[fecha.getDay()] + ' ' + fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  if (!comidas) return (
+    <div>Loading data...</div>
+  );
+
 
   return (
     <div className='sm:container mx-auto sm:mt-4'>
@@ -66,14 +107,16 @@ export default function Panel({ searchParams } : SearchParamProps) {
             </div>
           </div>
         </div>
-        <EatTime title='Desayuno' param={show} />
-        <EatTime title='Almuerzo' param={show} />
-        <EatTime title='Comida'  param={show}/>
-        <EatTime title='Merienda' param={show}/>
-        <EatTime title='Cena' param={show}/>
+        <EatTime title='Desayuno' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Desayuno')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Almuerzo' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Almuerzo')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Comida' param={show}  alimentos={comidas.find(comida => comida.tipoComida == 'Comida')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Merienda' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Merienda')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Cena' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Cena')?.alimentos|| []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
       </div>
       <ButtonAuth />
     </div>
 
   )
-}
+};
+
+

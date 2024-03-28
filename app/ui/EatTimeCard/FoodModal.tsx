@@ -2,11 +2,21 @@
 import Link from "next/link";
 import SearchResult from "./SearchResult";
 import { useState } from "react";
+import { useSearchParams } from 'next/navigation'
 
-export default function FoodModal() {
+export default function FoodModal({
+    fecha,
+    setRenderizarDatos,
+} : {
+    fecha: Date,
+    setRenderizarDatos: any
+}) {
 
     const [inputValue, setInputValue] = useState("");
     const [buscar, setBuscar] = useState(false);
+    const searchParams = useSearchParams()
+ 
+    const tipo = searchParams.get('tipo')
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
@@ -29,7 +39,7 @@ export default function FoodModal() {
                     </Link>
                 </div>
                 <div className="px-4 py-2 flex flex-col items-center justify-between border-b border-gray-700">
-                    <h2 className="text-xl font-semibold">Desayuno</h2>
+                    <h2 className="text-xl font-semibold">{tipo}</h2>
                 </div>
                 <div className="p-4">
                     <div className="flex items-center">
@@ -59,7 +69,7 @@ export default function FoodModal() {
                             </div>
                         </form>
                     </div>
-                    {buscar && <SearchResult value={inputValue} setBuscar={setBuscar}/>}                    
+                    {buscar && <SearchResult value={inputValue} setBuscar={setBuscar} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>}                    
                 </div>
             </div>
         </div>

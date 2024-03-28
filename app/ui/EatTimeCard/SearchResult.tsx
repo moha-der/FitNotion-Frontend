@@ -1,5 +1,8 @@
+import { useSession } from "next-auth/react";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams, useRouter } from 'next/navigation'
 
 interface SearchResult {
     food: {
@@ -18,17 +21,29 @@ interface SearchResult {
 const API_ID = 'de378d1f';
 const API_KEY = '4c03d8d168a893312398253db520be1b';
 
+
 export default function SearchResult({
     value,
     setBuscar,
+    fecha,
+    setRenderizarDatos,
 }: {
     value: string;
     setBuscar: any;
+    fecha: Date
+    setRenderizarDatos: any
 }) {
     const [searchResult, setSearchResult] = useState<SearchResult[]>();
     const [modalOpen, setModalOpen] = useState(false);
     const [quantity, setQuantity] = useState(0);
     const [selectedFood, setSelectedFood] = useState<SearchResult | null>(null);
+    const searchParams = useSearchParams()
+    const router = useRouter()
+ 
+    const tipo = searchParams.get('tipo')
+
+
+    const { data: session, status } = useSession();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,9 +76,8 @@ export default function SearchResult({
 
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        // Aquí puedes enviar la cantidad al backend
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Alimentos`, {
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL2}/Alimentos`, {
                 alimento: {
                     id: selectedFood?.food.foodId,
                     nombre: selectedFood?.food.label,
@@ -74,22 +88,22 @@ export default function SearchResult({
                     fibra: selectedFood?.food.nutrients.FIBTG ? parseFloat(selectedFood?.food.nutrients.FIBTG).toFixed(2) : 0,
                     racion: 0, 
                 },
-                email: "prueba@gmail.com", // Reemplaza esto con el correo del usuario
-                tipoComida: "Desayuno", // Tipo de comida (por ejemplo: desayuno, almuerzo, cena)
-                fecha: new Date().toISOString(), // Fecha actual
-                cantidad: quantity, // Cantidad de la ración
+                email: session ? session.user?.email : null, 
+                tipoComida: tipo, 
+                fecha: fecha.toISOString(), 
+                cantidad: quantity, 
             });
         } catch (error) {
             console.error("Error al enviar los datos al backend:", error);
         }
-        // Cerrar el modal después de enviar la cantidad
+        setRenderizarDatos(true);
         setModalOpen(false);
     };
 
     if (!searchResult) return null;
 
     return (
-        <div className="mt-4 overflow-y-auto h-[550px] md:h-[400px] xl:h-[550px]">
+        <div className="mt-4 overflow-y-auto h-[550px] md:h-[400px]">
             <h2 className="text-sm font-semibold">Resultados de búsqueda</h2>
             {searchResult.map((result) => (
                 <div key={result.food.foodId}>
@@ -97,9 +111,6 @@ export default function SearchResult({
                         <div className="text-sm font-semibold" onClick={() => handleOpenModal(result)}>
                             {result.food.label}
                         </div>
-                        <button className={`text-webColor ${result.food.label.length > 0 ? 'bg-[#1c1c1e] text-white' : ''}`}>
-                            +
-                        </button>
                     </div>
                     <div className="text-xs text-gray-400">
                         {parseFloat(result.food.nutrients.ENERC_KCAL).toFixed(2)} cal,
@@ -163,6 +174,7 @@ export default function SearchResult({
                                             type='number'
                                             placeholder='1'
                                             className='w-[100px] bg-transparent p-1 px-2 text-right rounded-md border border-stroke outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2'
+                                            onChange={handleInputChange}
                                         />
                                     </div>
                                     <div className="flex justify-center items-center p-2">
