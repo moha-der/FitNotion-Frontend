@@ -30,7 +30,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
     if (!email) return;
     async function fetchComidas() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL2}/Alimentos/getAlimentosDia?email=${email}&fecha=${fechaFormateada}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Alimentos/getAlimentosDia?email=${email}&fecha=${fechaFormateada}`);
         if (response.ok) {
           const data = await response.json();
           setComidas(data);

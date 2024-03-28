@@ -77,7 +77,7 @@ export default function SearchResult({
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL2}/Alimentos`, {
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Alimentos`, {
                 alimento: {
                     id: selectedFood?.food.foodId,
                     nombre: selectedFood?.food.label,
