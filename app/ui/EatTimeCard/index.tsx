@@ -29,7 +29,7 @@ export default function EatTime({
 
     return (
         <>
-            <div className='col-span-12 flex flex-col border-y-2 md:col-span-8 md:rounded-xl md:border-2 md:mx-0'>
+            <div className='col-span-12 flex flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0'>
                 <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
                 <span>{title}</span>
                 <span>{caloriasTotal}</span>
