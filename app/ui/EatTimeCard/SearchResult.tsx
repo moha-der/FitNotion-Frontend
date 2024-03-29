@@ -68,8 +68,8 @@ export default function SearchResult({
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue: string = e.target.value; // Assuming the input value is a string
-        const parsedValue: number = parseFloat(inputValue); // Parse string to float
+        const inputValue: string = e.target.value; 
+        const parsedValue: number = parseFloat(inputValue); 
         setQuantity(parsedValue);
         
     };
@@ -86,12 +86,12 @@ export default function SearchResult({
                     grasas: selectedFood?.food.nutrients.FAT ? parseFloat(selectedFood?.food.nutrients.FAT).toFixed(2) : 0,
                     calorias: selectedFood?.food.nutrients.ENERC_KCAL ? parseFloat(selectedFood?.food.nutrients.ENERC_KCAL).toFixed(2) : 0,
                     fibra: selectedFood?.food.nutrients.FIBTG ? parseFloat(selectedFood?.food.nutrients.FIBTG).toFixed(2) : 0,
-                    racion: 0, 
+                    racion: 100, 
                 },
                 email: session ? session.user?.email : null, 
                 tipoComida: tipo, 
                 fecha: fecha.toISOString(), 
-                cantidad: quantity, 
+                cantidad: quantity ? quantity : 1, 
             });
         } catch (error) {
             console.error("Error al enviar los datos al backend:", error);
@@ -121,7 +121,6 @@ export default function SearchResult({
                     </div>
                 </div>
             ))}
-            {/* Modal para ingresar la cantidad */}
             {modalOpen && (
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center ">
                     <div className="bg-gray-200 text-black md:w-1/4 rounded-3xl ">
@@ -162,8 +161,9 @@ export default function SearchResult({
                                         </label>
                                         <input
                                             type='text'
-                                            placeholder='1 plato'
+                                            placeholder='100gr'
                                             className='w-[100px] bg-transparent p-1 px-2 text-right rounded-md border border-stroke outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2'
+                                            readOnly={true}
                                         />
                                     </div>
                                     <div className="flex justify-between items-center p-2">

@@ -26,7 +26,6 @@ export default function FoodModal({
       const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); 
         setBuscar(true); 
-        console.log(buscar)
       };
 
 

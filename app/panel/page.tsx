@@ -4,7 +4,39 @@ import ButtonAuth from '../components/SignOut/SignOut';
 import EatTime from '../ui/EatTimeCard';
 import { useSession } from "next-auth/react";
 import { TiposComida } from '../types/TiposComida';
+import { DonutChart } from '@tremor/react';
 
+
+const datahero = [
+  {
+    name: 'Noche Holding AG',
+    value: 9800,
+  },
+  {
+    name: 'Rain Drop AG',
+    value: 4567,
+  },
+  {
+    name: 'Push Rail AG',
+    value: 3908,
+  },
+  {
+    name: 'Flow Steal AG',
+    value: 2400,
+  },
+  {
+    name: 'Tiny Loop Inc.',
+    value: 2174,
+  },
+  {
+    name: 'Anton Resorts Holding',
+    value: 1398,
+  },
+];
+
+
+const dataFormatter = (number: number) =>
+  `$ ${Intl.NumberFormat('us').format(number).toString()}`;
 
 type SearchParamProps = {
   searchParams: Record<string, string> | null | undefined;
@@ -13,10 +45,11 @@ type SearchParamProps = {
 export default function Panel({ searchParams }: SearchParamProps) {
   const [fecha, setFecha] = useState(new Date());
   const show = searchParams?.show;
-  const tipo = searchParams?.tipo;
   const [comidas, setComidas] = useState <TiposComida[]>([]);
   const { data: session, status } = useSession();
   const [renderizarDatos, setRenderizarDatos] = useState(false);
+  const [caloriasConsumidas, setCaloriasConsumidas] = useState(0);
+  const [caloriasObjetivo, setCaloriasObjetivo] = useState(0);
 
   const email = session ? session.user?.email : null
 
@@ -33,7 +66,9 @@ export default function Panel({ searchParams }: SearchParamProps) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Alimentos/getAlimentosDia?email=${email}&fecha=${fechaFormateada}`);
         if (response.ok) {
           const data = await response.json();
-          setComidas(data);
+          setComidas(data.detalleComidas);
+          setCaloriasConsumidas(data.caloriasConsumidas);
+          setCaloriasObjetivo(data.caloriasObjetivo);
         } else {
           console.error('Error al obtener las comidas:', response.statusText);
         }
@@ -43,6 +78,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
     }
 
     fetchComidas();
+    setRenderizarDatos(false);
 
   }, [email, fechaFormateada, renderizarDatos]);
 
@@ -87,12 +123,12 @@ export default function Panel({ searchParams }: SearchParamProps) {
           <span>Calorías Restantes</span>
           <div className='flex justify-around my-2 text-xs'>
             <div className='flex flex-col items-center'>
-              <span>1000</span>
+              <span>{caloriasObjetivo}</span>
               <span>Objetivo</span>
             </div>
             <span className='text-base'>-</span>
             <div className='flex flex-col items-center'>
-              <span>1000</span>
+              <span>{caloriasConsumidas}</span>
               <span>Consumido</span>
             </div>
             <span className='text-base'>+</span>
@@ -102,17 +138,46 @@ export default function Panel({ searchParams }: SearchParamProps) {
             </div>
             <span className='text-base'>=</span>
             <div className='flex flex-col items-center'>
-              <span>1000</span>
+              <span>{(caloriasObjetivo - caloriasConsumidas).toFixed(2)}</span>
               <span>Restante</span>
             </div>
           </div>
         </div>
-        <EatTime title='Desayuno' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Desayuno')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
-        <EatTime title='Almuerzo' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Almuerzo')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
-        <EatTime title='Comida' param={show}  alimentos={comidas.find(comida => comida.tipoComida == 'Comida')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
-        <EatTime title='Merienda' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Merienda')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
-        <EatTime title='Cena' param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Cena')?.alimentos|| []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Desayuno' caloriasTotal={comidas.find(comida => comida.tipoComida == 'Desayuno')?.caloriasTotal || 0} param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Desayuno')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Almuerzo' caloriasTotal={comidas.find(comida => comida.tipoComida == 'Almuerzo')?.caloriasTotal || 0} param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Almuerzo')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Comida'  caloriasTotal={comidas.find(comida => comida.tipoComida == 'Comida')?.caloriasTotal || 0} param={show}  alimentos={comidas.find(comida => comida.tipoComida == 'Comida')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Merienda' caloriasTotal={comidas.find(comida => comida.tipoComida == 'Merienda')?.caloriasTotal || 0} param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Merienda')?.alimentos || []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        <EatTime title='Cena' caloriasTotal={comidas.find(comida => comida.tipoComida == 'Cena')?.caloriasTotal || 0} param={show} alimentos={comidas.find(comida => comida.tipoComida == 'Cena')?.alimentos|| []} fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>
+        
       </div>
+      <div className="mx-auto space-y-12">
+      <div className="space-y-3">
+        <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+          donut variant 1
+        </span>
+        <div className="flex justify-center">
+          <DonutChart
+            data={datahero}
+            variant="donut"
+            valueFormatter={dataFormatter}
+            onValueChange={(v) => console.log(v)}
+          />
+        </div>
+      </div>
+      <div className="space-y-3">
+        <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+          pie variant
+        </span>
+        <div className="flex justify-center">
+          <DonutChart
+            data={datahero}
+            variant="pie"
+            valueFormatter={dataFormatter}
+            onValueChange={(v) => console.log(v)}
+          />
+        </div>
+      </div>
+    </div>
       <ButtonAuth />
     </div>
 

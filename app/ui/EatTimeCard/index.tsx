@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 
 export default function EatTime({
     title,
+    caloriasTotal,
     param,
     alimentos,
     fecha,
     setRenderizarDatos,
 }: {
     title: string
+    caloriasTotal: number,
     param: any
     alimentos: Alimentos[]
     fecha: Date
@@ -28,18 +30,24 @@ export default function EatTime({
     return (
         <>
             <div className='col-span-12 flex flex-col border-y-2 md:col-span-8 md:rounded-xl md:border-2 md:mx-0'>
-                <span className='border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white'>{title}</span>
+                <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
+                <span>{title}</span>
+                <span>{caloriasTotal}</span>
+                </div>
                 {alimentos.length !== 0 && (
                     <div className="mt-1">
                         {alimentos.map(alimento => (
                             <div key={alimento.id} className="px-4 py-2 flex flex-row justify-between">
-                                <span>{alimento.nombre}</span>
+                                <div className="flex flex-col">
+                                    <span className="pr-2">{alimento.nombre}</span>
+                                    <span className="text-[10px]">Cantidad (x100gr) : {alimento.cantidad}</span>
+                                </div>
                                 <span className="">{alimento.calorias}</span>
                             </div>
                         ))}
                     </div>
                 )}
-                <a className='px-4 py-2 text-blue-500' onClick={()=> router.push(`/panel?show=true&tipo=${title}`)} href="#">Agregar alimento</a>
+                <a className='px-4 py-2 text-webColor' onClick={()=> router.push(`/panel?show=true&tipo=${title}`)} href="#">Agregar alimento</a>
             </div>
             {param && <FoodModal fecha={fecha} setRenderizarDatos={setRenderizarDatos}/>}
 

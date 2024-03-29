@@ -1,5 +1,6 @@
 export interface TiposComida {
     tipoComida: String,
+    caloriasTotal: number,
     alimentos: Alimentos[],
 }
 
