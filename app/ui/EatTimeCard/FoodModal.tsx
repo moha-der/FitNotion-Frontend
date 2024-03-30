@@ -30,8 +30,8 @@ export default function FoodModal({
 
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-20 overflow-y-auto h-full w-full flex items-center justify-center">
-            <div className="bg-gray-200 text-webColor md:h-[80%] md:w-1/4 rounded-3xl">
+        <div className="fixed inset-0 z-100 bg-gray-600 bg-opacity-20 overflow-y-auto h-full w-full flex items-center justify-center">
+            <div className="bg-gray-200 text-webColor max-h-[90%] md:h-[80%] md:w-1/4 rounded-3xl">
                 <div className="absolute ml-4 mt-2">
                     <Link href={'/panel'}>
                         <ChevronLeftIcon className="text-black" />

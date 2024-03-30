@@ -27,6 +27,9 @@ export default function Panel({ searchParams }: SearchParamProps) {
   const [renderizarDatos, setRenderizarDatos] = useState(false);
   const [caloriasConsumidas, setCaloriasConsumidas] = useState(0);
   const [caloriasObjetivo, setCaloriasObjetivo] = useState(0);
+  const [proteinasTotal, setProteinasTotal] = useState(0);
+  const [carbohidratosTotal, setCarbohidratosTotal] = useState(0);
+  const [grasasTotal, setGrasasTotal] = useState(0);
 
   const [graficoResumen, setGraficoResumen] = useState<DataItem[]>([
     {
@@ -66,10 +69,11 @@ export default function Panel({ searchParams }: SearchParamProps) {
           setComidas(data.detalleComidas);
           setCaloriasConsumidas(data.caloriasConsumidas);
           setCaloriasObjetivo(data.caloriasObjetivo);
+          setProteinasTotal(data.proteinasConsumidas);
+          setCarbohidratosTotal(data.hidratosConsumidos);
+          setGrasasTotal(data.grasasConsumidas);
 
-          console.log(data);
           if (data.caloriasConsumidas > 0) {
-            console.log('entroooo');
             const dataResumen: DataItem[] = [
               {
                 name: 'Proteínas',
@@ -84,7 +88,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
                 value: ((data.grasasConsumidas * 9) / data.caloriasConsumidas) * 100,
               },
             ];
-            
+
 
             setGraficoResumen(dataResumen);
           } else {
@@ -185,12 +189,37 @@ export default function Panel({ searchParams }: SearchParamProps) {
             <div className='col-span-12 px-4 flex flex-col py-2 md:hidden'>
               <div className="">
                 <div className="space-y-3">
-                  <div className="flex justify-center">
+                  <div className="flex justify-around">
                     <ProgressCircle value={(caloriasConsumidas / caloriasObjetivo) * 100} size="lg" color="green">
                       <span className="text-xs text-center font-medium text-slate-700">
-                        {(caloriasObjetivo - caloriasConsumidas) > 0 ? `${caloriasObjetivo - caloriasConsumidas} Restantes` : 'Objetivo completado'}
+                        {
+                          Math.ceil(caloriasObjetivo - caloriasConsumidas) > 0 ?
+                            <span className="text-xs text-center font-medium text-slate-700"> {caloriasObjetivo - caloriasConsumidas} <br /> Restantes </span> :
+                            <span className="text-xs text-center font-medium text-slate-700"> Objetivo <br /> Alcanzado </span>
+                        }
                       </span>
                     </ProgressCircle>
+                    <DonutChart
+                      className='max-w-[120px]'
+                      data={graficoResumen}
+                      variant="pie"
+                      valueFormatter={dataFormatter}
+                      onValueChange={(v) => console.log(v)}
+                      colors={[
+                        'green-300',
+                        'green-600',
+                        'green-900'
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-3 mt-4">
+                  <div className="flex flex-col justify-center items-center ">
+                    <Legend
+                      categories={[`${Math.ceil(proteinasTotal)} gr Proteínas`, `${Math.ceil(carbohidratosTotal)} gr Carbohidratos`, `${Math.ceil(grasasTotal)} gr Grasas`]}
+                      colors={['green-300', 'green-600', 'green-900']}
+                      className="mt-2 "
+                    />
                   </div>
                 </div>
               </div>
@@ -232,7 +261,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
                   ]}
                 />
                 <Legend
-                  categories={['Proteínas', 'Carbohidratos', 'Grasas']}
+                  categories={[`${Math.ceil(proteinasTotal)}gr Proteínas`, `${Math.ceil(carbohidratosTotal)}gr Carbohidratos`, `${Math.ceil(grasasTotal)}gr Grasas`]}
                   colors={['green-300', 'green-600', 'green-900']}
                   className="max-w-xs"
                 />
