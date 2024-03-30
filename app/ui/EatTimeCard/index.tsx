@@ -32,7 +32,7 @@ export default function EatTime({
             <div className='col-span-12 flex flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0'>
                 <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
                 <span>{title}</span>
-                <span>{caloriasTotal}</span>
+                <span>{Math.ceil(caloriasTotal)}</span>
                 </div>
                 {alimentos.length !== 0 && (
                     <div className="mt-1">
@@ -42,7 +42,7 @@ export default function EatTime({
                                     <span className="pr-2">{alimento.nombre}</span>
                                     <span className="text-[10px]">Cantidad (x100gr) : {alimento.cantidad}</span>
                                 </div>
-                                <span className="">{alimento.calorias}</span>
+                                <span className="">{Math.ceil(alimento.calorias)}</span>
                             </div>
                         ))}
                     </div>

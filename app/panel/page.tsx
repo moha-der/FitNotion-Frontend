@@ -28,10 +28,23 @@ export default function Panel({ searchParams }: SearchParamProps) {
   const [caloriasConsumidas, setCaloriasConsumidas] = useState(0);
   const [caloriasObjetivo, setCaloriasObjetivo] = useState(0);
 
-  const [graficoResumen, setGraficoResumen] = useState<DataItem[]>([]);
+  const [graficoResumen, setGraficoResumen] = useState<DataItem[]>([
+    {
+      name: 'Vacio',
+      value: 100,
+    },
+    {
+      name: 'Carbohidratos',
+      value: 0,
+    },
+    {
+      name: 'Grasas',
+      value: 0,
+    },
+  ]);
 
-  const dataFormatter = (caloriasConsumidas: number) =>
-    `${Math.ceil(caloriasObjetivo - caloriasConsumidas)} \r\nRestante`;
+  const dataFormatter = (number: any) =>
+    `${number.toFixed(2)}%`;
 
 
   const email = session ? session.user?.email : null
@@ -44,6 +57,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
 
   useEffect(() => {
     if (!email) return;
+
     async function fetchComidas() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Alimentos/getAlimentosDia?email=${email}&fecha=${fechaFormateada}`);
@@ -53,19 +67,44 @@ export default function Panel({ searchParams }: SearchParamProps) {
           setCaloriasConsumidas(data.caloriasConsumidas);
           setCaloriasObjetivo(data.caloriasObjetivo);
 
-          const dataResumen: DataItem[] = [
-            {
-              name: 'Restante',
-              value: caloriasObjetivo - caloriasConsumidas,
-            },
-            {
-              name: 'Consumidas',
-              value: caloriasConsumidas,
-            },
-          ];
+          console.log(data);
+          if (data.caloriasConsumidas > 0) {
+            console.log('entroooo');
+            const dataResumen: DataItem[] = [
+              {
+                name: 'Proteínas',
+                value: ((data.proteinasConsumidas * 4) / data.caloriasConsumidas) * 100,
+              },
+              {
+                name: 'Carbohidratos',
+                value: ((data.hidratosConsumidos * 4) / data.caloriasConsumidas) * 100,
+              },
+              {
+                name: 'Grasas',
+                value: ((data.grasasConsumidas * 9) / data.caloriasConsumidas) * 100,
+              },
+            ];
+            
 
-          // Utilizar datahero en el componente
-          setGraficoResumen(dataResumen);
+            setGraficoResumen(dataResumen);
+          } else {
+            const dataResumen: DataItem[] = [
+              {
+                name: 'Vacio',
+                value: 1000,
+              },
+              {
+                name: 'Carbohidratos',
+                value: 0,
+              },
+              {
+                name: 'Grasas',
+                value: 0,
+              },
+            ];
+
+            setGraficoResumen(dataResumen);
+          }
         } else {
           console.error('Error al obtener las comidas:', response.statusText);
         }
@@ -128,7 +167,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
                 </div>
                 <span className='text-base'>-</span>
                 <div className='flex flex-col items-center'>
-                  <span>{caloriasConsumidas}</span>
+                  <span>{Math.ceil(caloriasConsumidas)}</span>
                   <span>Consumido</span>
                 </div>
                 <span className='text-base'>+</span>
@@ -138,7 +177,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
                 </div>
                 <span className='text-base'>=</span>
                 <div className='flex flex-col items-center'>
-                  <span>{(caloriasObjetivo - caloriasConsumidas).toFixed(2)}</span>
+                  <span>{Math.ceil(caloriasObjetivo - caloriasConsumidas)}</span>
                   <span>Restante</span>
                 </div>
               </div>
@@ -148,7 +187,9 @@ export default function Panel({ searchParams }: SearchParamProps) {
                 <div className="space-y-3">
                   <div className="flex justify-center">
                     <ProgressCircle value={(caloriasConsumidas / caloriasObjetivo) * 100} size="lg" color="green">
-                      <span className="text-xs text-center font-medium text-slate-700">{caloriasObjetivo - caloriasConsumidas} <br />Restantes</span>
+                      <span className="text-xs text-center font-medium text-slate-700">
+                        {(caloriasObjetivo - caloriasConsumidas) > 0 ? `${caloriasObjetivo - caloriasConsumidas} Restantes` : 'Objetivo completado'}
+                      </span>
                     </ProgressCircle>
                   </div>
                 </div>
@@ -167,8 +208,34 @@ export default function Panel({ searchParams }: SearchParamProps) {
             <div className="space-y-3">
               <div className="flex justify-center">
                 <ProgressCircle value={(caloriasConsumidas / caloriasObjetivo) * 100} size="xl" color="green">
-                  <span className="text-xs text-center font-medium text-slate-700">{caloriasObjetivo - caloriasConsumidas} <br />Restantes</span>
+
+                  {
+                    Math.ceil(caloriasObjetivo - caloriasConsumidas) > 0 ?
+                      <span className="text-xs text-center font-medium text-slate-700"> {caloriasObjetivo - caloriasConsumidas} <br /> Restantes </span> :
+                      <span className="text-xs text-center font-medium text-slate-700"> Objetivo <br /> Alcanzado </span>
+                  }
+
                 </ProgressCircle>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-center">
+                <DonutChart
+                  data={graficoResumen}
+                  variant="pie"
+                  valueFormatter={dataFormatter}
+                  onValueChange={(v) => console.log(v)}
+                  colors={[
+                    'green-300',
+                    'green-600',
+                    'green-900'
+                  ]}
+                />
+                <Legend
+                  categories={['Proteínas', 'Carbohidratos', 'Grasas']}
+                  colors={['green-300', 'green-600', 'green-900']}
+                  className="max-w-xs"
+                />
               </div>
             </div>
           </div>
