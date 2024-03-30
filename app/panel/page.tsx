@@ -4,7 +4,7 @@ import ButtonAuth from '../components/SignOut/SignOut';
 import EatTime from '../ui/EatTimeCard';
 import { useSession } from "next-auth/react";
 import { TiposComida } from '../types/TiposComida';
-import { DonutChart, Legend } from '@tremor/react';
+import { DonutChart, Legend, ProgressCircle } from '@tremor/react';
 
 
 
@@ -55,12 +55,12 @@ export default function Panel({ searchParams }: SearchParamProps) {
 
           const dataResumen: DataItem[] = [
             {
-              name: 'Objetivo',
-              value: caloriasObjetivo,
-            },
-            {
               name: 'Restante',
               value: caloriasObjetivo - caloriasConsumidas,
+            },
+            {
+              name: 'Consumidas',
+              value: caloriasConsumidas,
             },
           ];
 
@@ -147,12 +147,9 @@ export default function Panel({ searchParams }: SearchParamProps) {
               <div className="">
                 <div className="space-y-3">
                   <div className="flex justify-center">
-                    <DonutChart
-                      data={graficoResumen}
-                      variant="donut"
-                      valueFormatter={(number: number) => dataFormatter(caloriasConsumidas)}
-                      onValueChange={(v) => console.log(v)}
-                    />
+                    <ProgressCircle value={(caloriasConsumidas / caloriasObjetivo) * 100} size="lg" color="green">
+                      <span className="text-xs text-center font-medium text-slate-700">{caloriasObjetivo - caloriasConsumidas} <br />Restantes</span>
+                    </ProgressCircle>
                   </div>
                 </div>
               </div>
@@ -165,16 +162,13 @@ export default function Panel({ searchParams }: SearchParamProps) {
 
           </div>
         </div>
-        <div className='hidden md:col-span-4'>
+        <div className='hidden md:block md:col-span-4 py-4'>
           <div className="mx-auto space-y-12">
             <div className="space-y-3">
               <div className="flex justify-center">
-                <DonutChart
-                  data={graficoResumen}
-                  variant="donut"
-                  valueFormatter={(number: number) => dataFormatter(caloriasConsumidas)}
-                  onValueChange={(v) => console.log(v)}
-                />
+                <ProgressCircle value={(caloriasConsumidas / caloriasObjetivo) * 100} size="xl" color="green">
+                  <span className="text-xs text-center font-medium text-slate-700">{caloriasObjetivo - caloriasConsumidas} <br />Restantes</span>
+                </ProgressCircle>
               </div>
             </div>
           </div>
