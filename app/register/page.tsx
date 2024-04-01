@@ -9,9 +9,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userValidation } from '../validations/userValidation';
-import bcrypt from "bcryptjs"
-import axios from 'axios';
+import { userValidation, mappedtiposUsuario } from '../validations/userValidation';
+import axios, { AxiosError } from 'axios';
 
 type Inputs = {
     nombre: string;
@@ -20,6 +19,7 @@ type Inputs = {
     password: string;
     confirmPassword: string;
     fechaNac: string;
+    tipoCuenta: string;
 };
 
 export default function Register() {
@@ -34,11 +34,17 @@ export default function Register() {
         resolver: zodResolver(userValidation),
     });
 
+    const [errorRegistro, setErrorRegistro] = useState('');
+
+    const tiposCuentaOptions = Object.entries(mappedtiposUsuario).map(([key, value]) => (
+        <option value={key} key={key}>
+          {value}
+        </option>
+      ));
+
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const email = data.email;
-        //const password = await bcrypt.hash(data.password, 10);
         const password = data.password;
-        
 
         var usuario = {
             id_Usuario: "string",
@@ -48,68 +54,56 @@ export default function Register() {
             apellidos: data.apellidos,
             edad: 20,
             fecha_nac: data.fechaNac,
-            tipo_usuario: 1
-        }
-        
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, usuario );
-
-     
-        const responseNextAuth = await signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        });
-
-        if (responseNextAuth?.error) {
-            console.log(responseNextAuth.error);
-            return;
+            tipo_usuario: parseInt(data.tipoCuenta)
         }
 
-        router.push("/panel");
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, usuario);
+
+            
+
+            const responseNextAuth = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
+    
+            if (responseNextAuth?.error) {
+                console.log(responseNextAuth.error);
+                return;
+            }
+    
+            if (response.data.Permiso == 1) {
+                router.push("/panel");
+            } else if (response.data.Permiso == 2) {
+                router.push("/portalNutricionista");
+            }
+            
+
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+                if (axiosError.response) {
+                    if (axiosError.response.status === 400) {
+                        setErrorRegistro("Error al registrar el usuario");
+                    } else if (axiosError.response.status === 401) {
+                        setErrorRegistro("No se ha podido crear su sesión");
+                    } else {
+                        setErrorRegistro("Ha ocurrido un error al realizar el registro");
+                    }
+                } else {
+                    setErrorRegistro("Ha ocurrido un error al realizar el registro");
+                }
+            } else {
+                setErrorRegistro("Ha ocurrido un error al realizar el registro");
+            }
+        }
 
     };
 
 
     const router = useRouter();
 
-    /*const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        var usuario = {
-            id_Usuario: "string",
-            email: email,
-            password: password,
-            nombre: nombre,
-            apellidos: apellidos,
-            edad: 20,
-            tipo_usuario: 1
-        }
-
-    
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(usuario),
-        });
-
-        console.log(response)
-     
-        const responseNextAuth = await signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        });
-    
-        if (responseNextAuth?.error) {
-          setErrors(responseNextAuth.error.split(","));
-          return;
-        }
-    
-        router.push("/panel");
-    };*/
 
     const fechaMinima = new Date();
     fechaMinima.setFullYear(fechaMinima.getFullYear() - 16);
@@ -119,7 +113,7 @@ export default function Register() {
         <div className="flex flex-wrap w-full">
             <div className="flex flex-col w-full md:w-1/2">
                 <div className="flex flex-col justify-center px-8 pt-8 my-auto md:justify-start md:pt-0 md:px-24 lg:px-32">
-                    <div className="mb-4 mt-6 mx-auto sm:max-w-xs md:max-w-sm">
+                    <div className="mb-4 mt-6 mx-auto sm:max-w-xs">
                         <Image src={HeroMobile} alt='texto' />
                         <h4 className='text-center mt-4 text-lg font-medium'>Crea una cuenta</h4>
                     </div>
@@ -188,7 +182,7 @@ export default function Register() {
                             </div>
                             {errors.password?.message && <p className='text-red-700 texto-errores'>{errors.password?.message}</p>}
                         </div>
-                        <div className="flex flex-col pt-4 mb-12">
+                        <div className="flex flex-col pt-4">
                             <div className="flex relative ">
                                 <span className=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
                                     <svg width="15" height="15" fill="currentColor" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
@@ -199,6 +193,43 @@ export default function Register() {
                                 <input type="password" id="confirmPassword" className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Confirm password" {...register("confirmPassword")} />
                             </div>
                             {errors.confirmPassword?.message && <p className='text-red-700 texto-errores'>{errors.confirmPassword?.message}</p>}
+                        </div>
+                        <div className="flex flex-col pt-4 mb-12">
+                            <div className="flex relative ">
+                                <span className=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="15"
+                                        height="15"
+                                        fill="currentColor"
+                                        baseProfile="tiny"
+                                        version="1.2"
+                                        viewBox="0 0 256 256"
+                                        xmlSpace="preserve"
+                                    >
+                                        <path d="M29.8 166.1c.6-20-10.3-27.6-23.6-32.6-4.4 17.2 7.8 31.5 23.6 32.6"></path>
+                                        <path d="M32.8 76.7c8.5-18.2 1.4-29.4-8.8-39.3-10.7 14-5.2 32 8.8 39.3"></path>
+                                        <path d="M37.6 127.2c-.6-20 10.3-27.6 23.6-32.6 4.4 17.2-7.8 31.4-23.6 32.6"></path>
+                                        <path d="M37.6 158.1c-.6-20 10.3-27.6 23.6-32.6 4.4 17.2-7.8 31.4-23.6 32.6"></path>
+                                        <path d="M37.6 96.3c-.6-20 10.3-27.6 23.6-32.6 4.4 17.2-7.8 31.5-23.6 32.6"></path>
+                                        <path d="M29.8 135.3c.6-20-10.3-27.6-23.6-32.6-4.4 17.1 7.8 31.4 23.6 32.6"></path>
+                                        <path d="M29.8 104.4c.6-20-10.3-27.6-23.6-32.6C1.8 89 14 103.2 29.8 104.4"></path>
+                                        <path d="M179.9 255.4H72.5l53.7-93 53.7 93z"></path>
+                                        <path d="M14.2 192.1L241.7 130.2 238.3 117.7 10.8 179.6z"></path>
+                                        <path d="M174.7.6s1.7 32.8 30.4 30c0 .1 3.3-27.4-30.4-30"></path>
+                                        <path d="M204.8 107.4c-3 4.3-8 7-13.6 7-4.6 0-9.1-2.2-12.1-5.2-6.2-6.8-14.2-21.9-14.2-21.9-4.5-9.1-6.9-16.2-6.9-23.4 0-15.2 12.3-28.4 27.6-28.4 7.5 0 14.3 3 19.3 7.9 5-4.9 11.8-7.9 19.3-7.9 15.3 0 27.6 13.2 27.6 28.4 0 7.1-2.4 14.2-6.9 23.4 0 0-8 15.1-14.2 21.9-3 3-7.5 5.2-12.1 5.2-5.8 0-10.8-2.8-13.8-7"></path>
+                                    </svg>
+                                </span>
+                                <select
+                                    id="tipoCuenta"
+                                    className="flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                                    {...register("tipoCuenta")}
+                                >
+                                    {tiposCuentaOptions}
+                                </select>
+                                
+                            </div>
+                            {errorRegistro && <p className='text-red-700 texto-errores'>{errorRegistro}</p>}
                         </div>
                         <button type="submit" className="w-full px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-webColor shadow-md hover:text-black hover:bg-white focus:outline-none focus:ring-2">
                             <span className="w-full">

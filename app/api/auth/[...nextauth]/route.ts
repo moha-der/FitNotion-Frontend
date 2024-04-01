@@ -17,9 +17,8 @@ const authOptions = {
                 password: {label: "Password", type:"password"}
             },
             async authorize(credentials) {
-
+                
                 console.log(credentials)
-
                 try {
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Login`, credentials);
 
@@ -30,7 +29,6 @@ const authOptions = {
                             permiso: response.data.permiso,
                             email: response.data.email
                         }
-    
                         return user;
                     }
                     return null;

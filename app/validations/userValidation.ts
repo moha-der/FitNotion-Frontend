@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+const tiposUsuario = ['1', '2'] as const;
+
+export type tiposUsuario = (typeof tiposUsuario)[number];
+
+export const mappedtiposUsuario: {[key in tiposUsuario]: string} = {
+    1: "Consumidor",
+    2: "Nutricionista",
+}
+
 export const userValidation = z.object( {
     nombre: z
     .string()
@@ -34,6 +43,9 @@ export const userValidation = z.object( {
     }),
     fechaNac: z.string().refine(dob => new Date(dob).toString() !== "Invalid Date", {
         message: "Introduzca una fecha de nacimiento válida"
+    }),
+    tipoCuenta: z.enum(tiposUsuario, {
+      errorMap: () => ({ message: "Selecciona un tipo de usuario" }),
     }),
 }).refine(data => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",

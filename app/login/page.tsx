@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userValidation } from '../validations/userValidation';
-import bcrypt from "bcryptjs"
+import { useSession } from 'next-auth/react';
 
 type Inputs = {
     email: string;
@@ -27,31 +27,10 @@ export default function Login() {
         resolver: zodResolver(userValidation),
     });
 
+    const { data: session } = useSession();
+
     const router = useRouter();
 
-    const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        console.log(data)
-        const email = data.email;
-        //const password = await bcrypt.hash(data.password, 10);
-        const password = data
-
-        console.log(data)
-        
-
-        const responseNextAuth = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-          });
-      
-          if (responseNextAuth?.error) {
-            console.log(responseNextAuth.error);
-            return;
-          }
-      
-          router.push("/panel");
-
-    };
 
     const handleSubmit2 = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -70,8 +49,13 @@ export default function Login() {
             console.log(responseNextAuth.error);
             return;
           }
-      
-          router.push("/panel");
+        
+        if (session?.user.permiso == 1 ) {
+            router.push("/panel");
+        } else if (session?.user.permiso == 2) {
+            router.push("/portalNutricionista");
+        } 
+        
     };
 
 
