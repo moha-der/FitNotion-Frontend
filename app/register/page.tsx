@@ -60,6 +60,8 @@ export default function Register() {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Register`, usuario);
 
+            setErrorRegistro('');
+            
             
 
             const responseNextAuth = await signIn("credentials", {
@@ -72,9 +74,12 @@ export default function Register() {
                 console.log(responseNextAuth.error);
                 return;
             }
+
+            console.log(response);
     
-            if (response.data.Permiso == 1) {
+            if (response.data.permiso == 1) {
                 router.push("/panel");
+                console.log("entrando");
             } else if (response.data.Permiso == 2) {
                 router.push("/portalNutricionista");
             }

@@ -1,3 +1,8 @@
+'use client'
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+
 const prueba = [
     {
         "nombre": "Juan Pérez",
@@ -36,17 +41,47 @@ const prueba = [
     }
 ]
 
+interface IDietas {
+    id_Dieta: number;
+    nombreCliente: string;
+    emailCliente: string;
+    fecha: Date;
 
+}
 
 export default function page() {
+    const [data, setData] = useState<IDietas[]>([]);
+    const { data: session } = useSession();
+
+    useEffect(() => {
+
+        async function fetchDietas() {
+            try {
+                if (session) {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/getDietas`, {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`
+                        }
+                    });
+                    setData(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+
+        }
+
+        fetchDietas();
+    }, [session]);
+
     return (
         <div className="container mx-auto">
             <div className='col-span-12 flex my-4 flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0'>
                 <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
                     <span>Seguimiento dietas</span>
                 </div>
-                <TablaDesktop />
-                <TablaMobile />
+                <TablaDesktop dietas={data} />
+                <TablaMobile dietas={data} />
             </div>
 
         </div>
@@ -54,14 +89,16 @@ export default function page() {
 }
 
 
-const TablaDesktop = () => {
+const TablaDesktop = ({ dietas }: {
+    dietas: IDietas[]
+}) => {
     return (
         <div className="hidden md:flex flex-col">
             <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                     <div className="overflow-hidden">
-                        <table className="min-w-full text-center text-sm font-light text-surface dark:text-white">
-                            <thead className="border-b border-neutral-200 font-medium dark:border-white/10">
+                        <table className="min-w-full text-center text-sm font-light text-surface ">
+                            <thead className="border-b border-neutral-200 font-medium ">
                                 <tr>
                                     <th scope="col" className="px-6 py-2">Nombre</th>
                                     <th scope="col" className="px-6 py-2">Email</th>
@@ -71,11 +108,11 @@ const TablaDesktop = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {prueba.map((item, index) => (
-                                    <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
-                                        <td className="whitespace-nowrap px-6 py-2">{item.nombre}</td>
-                                        <td className="whitespace-nowrap px-6 py-2">{item.email}</td>
-                                        <td className="whitespace-nowrap px-6 py-2">{item.fecha}</td>
+                                {dietas ? dietas.map((item, index) => (
+                                    <tr key={index} className="border-b border-neutral-200 ">
+                                        <td className="whitespace-nowrap px-6 py-2">{item.nombreCliente}</td>
+                                        <td className="whitespace-nowrap px-6 py-2">{item.emailCliente}</td>
+                                        <td className="whitespace-nowrap px-6 py-2">{new Date(item.fecha).toLocaleDateString()}</td>
                                         <td className="whitespace-nowrap px-6 py-2">
                                             <div className="flex justify-center">
                                                 <DetalleIcon />
@@ -87,7 +124,11 @@ const TablaDesktop = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                )) : (
+                                    <tr>
+                                        <td colSpan={5} className="text-center py-4">No hay datos disponibles</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -97,13 +138,15 @@ const TablaDesktop = () => {
     );
 }
 
-const TablaMobile = () => {
+const TablaMobile = ({ dietas }: {
+    dietas: IDietas[]
+}) => {
     return (<div className="flex flex-col md:hidden">
         <div className="overflow-x-auto">
             <div className="inline-block min-w-full py-2 ">
                 <div className="overflow-hidden">
-                    <table className="min-w-full text-left text-sm font-light text-surface dark:text-white">
-                        <thead className="border-b border-neutral-200 font-medium dark:border-white/10 px-4">
+                    <table className="min-w-full text-left text-sm font-light text-surface ">
+                        <thead className="border-b border-neutral-200 font-medium  px-4">
                             <tr>
                                 <th scope="col" className="pl-6">Cliente</th>
                                 <th scope="col" className="pl-4">Fecha</th>
@@ -111,15 +154,15 @@ const TablaMobile = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {prueba.map((item, index) => (
-                                <tr key={index} className="border-b border-neutral-200 dark:border-white/10">
+                            {dietas ? dietas.map((item, index) => (
+                                <tr key={index} className="border-b border-neutral-200 ">
                                     <td className="whitespace-nowrap px-6 py-2">
                                         <div className="flex flex-col">
-                                            <span className="font-semibold">{item.nombre}</span>
-                                            <span>{item.email}</span>
+                                            <span className="font-semibold">{item.nombreCliente}</span>
+                                            <span>{item.emailCliente}</span>
                                         </div>
                                     </td>
-                                    <td className="whitespace-nowrap">{item.fecha}</td>
+                                    <td className="whitespace-nowrap">{new Date(item.fecha).toLocaleDateString()}</td>
                                     <td className="whitespace-nowrap">
                                         <div className="flex flex-row ml-1">
                                             <span className="px-2">
@@ -132,7 +175,11 @@ const TablaMobile = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            ))}
+                            )) : (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-4">No hay datos disponibles</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
