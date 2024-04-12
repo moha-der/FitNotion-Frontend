@@ -49,7 +49,7 @@ interface IDietas {
 
 }
 
-export default function page() {
+export default function Page() {
     const [data, setData] = useState<IDietas[]>([]);
     const { data: session } = useSession();
 
