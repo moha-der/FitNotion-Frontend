@@ -1,45 +1,12 @@
 'use client'
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
+import ButtonAuth from '../components/SignOut/SignOut';
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-const prueba = [
-    {
-        "nombre": "Juan Pérez",
-        "email": "juan@example.com",
-        "fecha": "2024-04-07",
-        "icono1": "XX",
-        "icono2": "YY"
-    },
-    {
-        "nombre": "María García",
-        "email": "maria@example.com",
-        "fecha": "2024-04-07",
-        "icono1": "XX",
-        "icono2": "YY"
-    },
-    {
-        "nombre": "Carlos López",
-        "email": "carlos@example.com",
-        "fecha": "2024-04-07",
-        "icono1": "XX",
-        "icono2": "YY"
-    },
-    {
-        "nombre": "Ana Martínez",
-        "email": "ana@example.com",
-        "fecha": "2024-04-07",
-        "icono1": "XX",
-        "icono2": "YY"
-    },
-    {
-        "nombre": "Pedro Rodríguez",
-        "email": "pedro@example.com",
-        "fecha": "2024-04-07",
-        "icono1": "XX",
-        "icono2": "YY"
-    }
-]
+
+
 
 interface IDietas {
     id_Dieta: number;
@@ -49,9 +16,20 @@ interface IDietas {
 
 }
 
-export default function Page() {
+interface IClientes {
+    nombreCliente: string;
+    emailCliente: string;
+}
+
+
+export default function Portal() {
     const [data, setData] = useState<IDietas[]>([]);
     const { data: session } = useSession();
+    const [inputValue, setInputValue] = useState("");
+    const [clientes, setClientes] = useState<IClientes[]>([]);
+    const [error, setError] = useState("");
+    const [clientesAsignados, setClienteAsignados] = useState<IClientes[]>([]);
+
 
     useEffect(() => {
 
@@ -64,6 +42,25 @@ export default function Page() {
                         }
                     });
                     setData(response.data);
+
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+
+        }
+
+        async function fetchClientes() {
+            try {
+                if (session) {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/getClientesAsignados`, {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`
+                        }
+                    });
+                    console.log(response.data)
+                    setClienteAsignados(response.data);
+
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -72,7 +69,46 @@ export default function Page() {
         }
 
         fetchDietas();
+        fetchClientes();
     }, [session]);
+
+    async function getCliente() {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/getCliente?emailCliente=${inputValue}`, {
+                headers: {
+                    Authorization: `Bearer ${session?.user.token}`
+                }
+            });
+            if (response.data == 'Sin Clientes') {
+                setError("No se han encontrado clientes");
+            } else {
+                setClientes(response.data);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+
+                if (axiosError.response) {
+                    if (axiosError.response.status === 400) {
+                        setError("No se han encontrado clientes");
+                    }
+                }
+            }
+        }
+    }
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        console.log(inputValue);
+        getCliente();
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(event.target.value);
+        setError("");
+    };
+
+    console.log("clientes cont: " + clientesAsignados.length)
 
     return (
         <div className="container mx-auto">
@@ -83,7 +119,56 @@ export default function Page() {
                 <TablaDesktop dietas={data} />
                 <TablaMobile dietas={data} />
             </div>
+            <div className="flex flex-col md:flex-row justify-between px-2s">
+                <div className='flex my-4 flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0 md:w-[49%]'>
+                    <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
+                        <span>Ver clientes asignados</span>
+                    </div>
+                    {clientesAsignados.length > 0 && (
+                        <TablaCliente clientes={clientesAsignados} asignados={true}/>
+                    )}
 
+                </div>
+                <div className='flex my-4 flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0 md:w-[49%]'>
+                    <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
+                        <span>Añadir clientes</span>
+                    </div>
+                    <div className="flex items-center">
+                        <form className="relative w-full m-4 mt-6 " onSubmit={handleSubmit}>
+                            <input
+                                type="text"
+                                placeholder="ejemplo@gmail.com"
+                                className="block w-full h-4 rounded-2xl border border-neutral-300 bg-transparent py-4 pl-6 pr-20 text-base/6 text-neutral-950 ring-4 ring-transparent transition placeholder:text-neutral-500 focus:border-neutral-950 focus:outline-none focus:ring-neutral-950/5"
+                                value={inputValue}
+                                onChange={handleInputChange}
+                            />
+                            <div className="absolute inset-y-1 right-1 flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="flex aspect-square h-full items-center justify-center rounded-xl bg-webColor text-white transition hover:bg-neutral-800"
+
+                                >
+                                    <svg viewBox="0 0 16 6" aria-hidden="true" className="w-4">
+                                        <path
+                                            fill="currentColor"
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M16 3 10 .5v2H0v1h10v2L16 3Z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {error && <p className="text-red-500 mx-4">{error}</p>}
+                    {clientes.length > 0 && (
+                        <TablaCliente clientes={clientes} asignados={false}/>
+                    )}
+
+                </div>
+            </div>
+
+            <ButtonAuth />
         </div>
     );
 }
@@ -188,6 +273,56 @@ const TablaMobile = ({ dietas }: {
     </div>
     );
 
+}
+
+const TablaCliente = ({ clientes, asignados }: {
+    clientes: IClientes[],
+    asignados: boolean
+}) => {
+    return (<div className="flex flex-col">
+        <div className="overflow-x-auto">
+            <div className="inline-block min-w-full py-2 ">
+                <div className="overflow-hidden">
+                    <table className="min-w-full text-left text-sm font-light text-surface ">
+                        <tbody>
+                            {clientes ?
+                                clientes.map((item, index) => (
+                                    <tr key={index} className="border-b border-neutral-200 ">
+                                        <td className="whitespace-nowrap px-6 py-2">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold">{item.nombreCliente}</span>
+                                                <span>{item.emailCliente}</span>
+                                            </div>
+                                        </td>
+                                        <td className="whitespace-nowrap">
+                                            <div className="flex flex-row">
+                                                {
+                                                    !asignados && 
+                                                    <span className="px-2 md:px-0">
+                                                        <PlusIcon className="h-6 w-6 text-[#388e3c]" />
+                                                    </span>
+                                                }
+                                                {
+                                                    asignados && 
+                                                    <span className="px-2 md:px-0">
+                                                        <TrashIcon className="h-6 w-6 text-[#388e3c]" />
+                                                    </span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )) :
+                                (
+                                    <tr>
+                                        <td colSpan={5} className="text-center py-4">No hay datos disponibles</td>
+                                    </tr>
+                                )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>);
 }
 
 const HistoricoIcon = () => {
