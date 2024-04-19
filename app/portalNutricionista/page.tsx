@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import ButtonAuth from '../components/SignOut/SignOut';
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { set } from "zod";
 
 
 
@@ -20,6 +21,9 @@ interface IClientes {
     nombreCliente: string;
     emailCliente: string;
 }
+
+
+var tokenConstante: string;
 
 
 export default function Portal() {
@@ -70,6 +74,10 @@ export default function Portal() {
 
         fetchDietas();
         fetchClientes();
+
+        if (session) {
+            tokenConstante = session?.user.token;
+        }
     }, [session]);
 
     async function getCliente() {
@@ -108,7 +116,20 @@ export default function Portal() {
         setError("");
     };
 
-    console.log("clientes cont: " + clientesAsignados.length)
+    const addCliente = (cliente: IClientes) => {
+
+        const clientesNuevosSinAsignar = clientes.filter((x) => x.emailCliente !== cliente.emailCliente);
+        setClientes(clientesNuevosSinAsignar);
+        setClienteAsignados([...clientesAsignados, cliente]);
+    }
+
+    const deleteCliente = (cliente: IClientes) => {
+
+        const clientesNuevosAsignados = clientesAsignados.filter((x) => x.emailCliente !== cliente.emailCliente);
+        setClienteAsignados(clientesNuevosAsignados);
+        console.log(clientesNuevosAsignados);
+    }
+
 
     return (
         <div className="container mx-auto">
@@ -125,7 +146,7 @@ export default function Portal() {
                         <span>Ver clientes asignados</span>
                     </div>
                     {clientesAsignados.length > 0 && (
-                        <TablaCliente clientes={clientesAsignados} asignados={true}/>
+                        <TablaCliente clientes={clientesAsignados} asignados={true} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""}/>
                     )}
 
                 </div>
@@ -162,7 +183,7 @@ export default function Portal() {
                     </div>
                     {error && <p className="text-red-500 mx-4">{error}</p>}
                     {clientes.length > 0 && (
-                        <TablaCliente clientes={clientes} asignados={false}/>
+                        <TablaCliente clientes={clientes} asignados={false} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""}/>
                     )}
 
                 </div>
@@ -275,10 +296,41 @@ const TablaMobile = ({ dietas }: {
 
 }
 
-const TablaCliente = ({ clientes, asignados }: {
+const TablaCliente = ({ clientes, asignados, addCliente, deleteCliente, tokenSession }: {
     clientes: IClientes[],
-    asignados: boolean
+    asignados: boolean,
+    addCliente: (cliente: IClientes) => void,
+    deleteCliente: (cliente: IClientes) => void,
+    tokenSession: string
 }) => {
+
+    const addClienteApi = async (cliente: IClientes) => {
+        try {
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/AsignarCliente/${cliente.emailCliente}`, null, {
+                headers: { Authorization: `Bearer ${tokenSession}` },
+            });
+
+            addCliente(cliente);
+
+            console.log(response.data); // Maneja la respuesta como desees
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const deleteClienteApi = async (cliente: IClientes) => {
+        try {
+            const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/DesAsignarCliente/${cliente.emailCliente}`, {
+                headers: { Authorization: `Bearer ${tokenSession}` },
+            });
+
+            deleteCliente(cliente);
+
+            console.log(response.data); // Maneja la respuesta como desees
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
     return (<div className="flex flex-col">
         <div className="overflow-x-auto">
             <div className="inline-block min-w-full py-2 ">
@@ -297,14 +349,14 @@ const TablaCliente = ({ clientes, asignados }: {
                                         <td className="whitespace-nowrap">
                                             <div className="flex flex-row">
                                                 {
-                                                    !asignados && 
-                                                    <span className="px-2 md:px-0">
+                                                    !asignados &&
+                                                    <span className="px-2 md:px-0" onClick={() => addClienteApi(item)}>
                                                         <PlusIcon className="h-6 w-6 text-[#388e3c]" />
                                                     </span>
                                                 }
                                                 {
-                                                    asignados && 
-                                                    <span className="px-2 md:px-0">
+                                                    asignados &&
+                                                    <span className="px-2 md:px-0" onClick={() => deleteClienteApi(item)}>
                                                         <TrashIcon className="h-6 w-6 text-[#388e3c]" />
                                                     </span>
                                                 }
