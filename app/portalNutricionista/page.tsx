@@ -146,7 +146,7 @@ export default function Portal() {
                         <span>Ver clientes asignados</span>
                     </div>
                     {clientesAsignados.length > 0 && (
-                        <TablaCliente clientes={clientesAsignados} asignados={true} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""}/>
+                        <TablaCliente clientes={clientesAsignados} asignados={true} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""} />
                     )}
 
                 </div>
@@ -183,7 +183,7 @@ export default function Portal() {
                     </div>
                     {error && <p className="text-red-500 mx-4">{error}</p>}
                     {clientes.length > 0 && (
-                        <TablaCliente clientes={clientes} asignados={false} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""}/>
+                        <TablaCliente clientes={clientes} asignados={false} addCliente={addCliente} deleteCliente={deleteCliente} tokenSession={session?.user.token ? session?.user.token : ""} />
                     )}
 
                 </div>
@@ -331,50 +331,51 @@ const TablaCliente = ({ clientes, asignados, addCliente, deleteCliente, tokenSes
             console.error('Error:', error);
         }
     };
-    return (<div className="flex flex-col">
-        <div className="overflow-x-auto">
-            <div className="inline-block min-w-full py-2 ">
-                <div className="overflow-hidden">
-                    <table className="min-w-full text-left text-sm font-light text-surface ">
-                        <tbody>
-                            {clientes ?
-                                clientes.map((item, index) => (
-                                    <tr key={index} className="border-b border-neutral-200 ">
-                                        <td className="whitespace-nowrap px-6 py-2">
-                                            <div className="flex flex-col">
-                                                <span className="font-semibold">{item.nombreCliente}</span>
-                                                <span>{item.emailCliente}</span>
-                                            </div>
-                                        </td>
-                                        <td className="whitespace-nowrap">
-                                            <div className="flex flex-row">
-                                                {
-                                                    !asignados &&
-                                                    <span className="px-2 md:px-0" onClick={() => addClienteApi(item)}>
-                                                        <PlusIcon className="h-6 w-6 text-[#388e3c]" />
-                                                    </span>
-                                                }
-                                                {
-                                                    asignados &&
-                                                    <span className="px-2 md:px-0" onClick={() => deleteClienteApi(item)}>
-                                                        <TrashIcon className="h-6 w-6 text-[#388e3c]" />
-                                                    </span>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )) :
-                                (
-                                    <tr>
-                                        <td colSpan={5} className="text-center py-4">No hay datos disponibles</td>
-                                    </tr>
-                                )}
-                        </tbody>
-                    </table>
+    return (
+        <div className="flex flex-col">
+            <div className="overflow-x-auto">
+                <div className="inline-block min-w-full py-2 ">
+                    <div className="overflow-hidden">
+                        <table className="min-w-full text-left text-sm font-light text-surface ">
+                            <tbody>
+                                {clientes ?
+                                    clientes.map((item, index) => (
+                                        <tr key={index} className="border-b border-neutral-200 ">
+                                            <td className="whitespace-nowrap px-6 py-2">
+                                                <div className="flex flex-col">
+                                                    <span className="font-semibold">{item.nombreCliente}</span>
+                                                    <span>{item.emailCliente}</span>
+                                                </div>
+                                            </td>
+                                            <td className="whitespace-nowrap">
+                                                <div className="flex flex-row">
+                                                    {
+                                                        !asignados &&
+                                                        <span className="px-2 md:px-0" onClick={() => addClienteApi(item)}>
+                                                            <PlusIcon className="h-6 w-6 text-[#388e3c]" />
+                                                        </span>
+                                                    }
+                                                    {
+                                                        asignados &&
+                                                        <span className="px-2 md:px-0" onClick={() => deleteClienteApi(item)}>
+                                                            <TrashIcon className="h-6 w-6 text-[#388e3c]" />
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )) :
+                                    (
+                                        <tr>
+                                            <td colSpan={5} className="text-center py-4">No hay datos disponibles</td>
+                                        </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>);
+        </div>);
 }
 
 const HistoricoIcon = () => {
