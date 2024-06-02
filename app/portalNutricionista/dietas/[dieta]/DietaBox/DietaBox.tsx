@@ -47,7 +47,7 @@ const MealData = ({ data } : { data: any}) => {
         <h1 className="text-2xl font-bold mb-4 text-webColor">Detalle dieta</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Object.keys(data).map((mealType, index) => {
-            if (mealType === "notas") { //saltamos el campo de notas
+            if (mealType === "notas") { 
               return null; 
             }
             return (

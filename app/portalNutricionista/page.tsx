@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import ButtonAuth from '../components/SignOut/SignOut';
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { set } from "zod";
+import Link from "next/link";
 
 
 
@@ -133,6 +134,9 @@ export default function Portal() {
 
     return (
         <div className="container mx-auto">
+            <div className="flex justify-end mt-10">
+                <Link className="text-xs uppercase text-white font-medium ml-2 px-4 py-2 bg-webColor rounded-full" href={'portalNutricionista/nuevaDieta'}>Nueva Dieta</Link>
+            </div>
             <div className='col-span-12 flex my-4 flex-col border-y-2 md:rounded-xl md:border-2 md:mx-0'>
                 <div className="flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white">
                     <span>Seguimiento dietas</span>
@@ -221,7 +225,7 @@ const TablaDesktop = ({ dietas }: {
                                         <td className="whitespace-nowrap px-6 py-2">{new Date(item.fecha).toLocaleDateString()}</td>
                                         <td className="whitespace-nowrap px-6 py-2">
                                             <div className="flex justify-center">
-                                                <DetalleIcon />
+                                                <DetalleIcon id_Dieta={item.id_Dieta} />
                                             </div>
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-2">
@@ -272,7 +276,7 @@ const TablaMobile = ({ dietas }: {
                                     <td className="whitespace-nowrap">
                                         <div className="flex flex-row ml-1">
                                             <span className="px-2">
-                                                <DetalleIcon />
+                                                <DetalleIcon id_Dieta={item.id_Dieta}/>
                                             </span>
                                             <span className="">
                                                 <HistoricoIcon />
@@ -386,11 +390,16 @@ const HistoricoIcon = () => {
     );
 }
 
-const DetalleIcon = () => {
+const DetalleIcon = ({id_Dieta} : {
+    id_Dieta: number
+}) => {
     return (
+        <Link href={`portalNutricionista/dietas/${id_Dieta}`}>
         <svg className="w-6 h-6" fill="#388e3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
             <path clipRule="evenodd" fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z" />
         </svg>
+        </Link>
+        
     );
 }
