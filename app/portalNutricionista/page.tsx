@@ -3,11 +3,8 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import ButtonAuth from '../components/SignOut/SignOut';
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { set } from "zod";
+import { DocumentPlusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-
-
 
 
 interface IDietas {
@@ -41,6 +38,7 @@ export default function Portal() {
         async function fetchDietas() {
             try {
                 if (session) {
+                    console.log(session.user.token)
                     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/getDietas`, {
                         headers: {
                             Authorization: `Bearer ${session?.user.token}`
@@ -354,6 +352,20 @@ const TablaCliente = ({ clientes, asignados, addCliente, deleteCliente, tokenSes
                                             <td className="whitespace-nowrap">
                                                 <div className="flex flex-row">
                                                     {
+                                                        asignados &&
+                                                        <Link href={`portalNutricionista/nuevaDieta/${item.emailCliente}`}>
+                                                            <span className="px-2 flex flex-col items-center md:px-0">
+                                                                <DocumentPlusIcon  className="h-6 w-6 text-[#388e3c]" />
+                                                                Nueva Dieta
+                                                            </span>
+                                                        </Link>
+                                                        
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td className="whitespace-nowrap">
+                                                <div className="flex flex-row">
+                                                    {
                                                         !asignados &&
                                                         <span className="px-2 md:px-0" onClick={() => addClienteApi(item)}>
                                                             <PlusIcon className="h-6 w-6 text-[#388e3c]" />
@@ -367,6 +379,7 @@ const TablaCliente = ({ clientes, asignados, addCliente, deleteCliente, tokenSes
                                                     }
                                                 </div>
                                             </td>
+                                            
                                         </tr>
                                     )) :
                                     (
