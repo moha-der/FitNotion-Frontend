@@ -13,20 +13,18 @@ const authOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: { label: "Email", type:"text", placeholder:"jsmith" },
+                email: { label: "Email", type:"text" },
                 password: {label: "Password", type:"password"}
             },
-            async authorize(credentials) {
-                
+            async authorize(credentials) {             
                 try {
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/Login`, credentials);
-
-
                     if (response.data.msg == 'OK') {
                         const user: any = {
                             token: response.data.token,
                             permiso: response.data.permiso,
-                            email: response.data.email
+                            email: response.data.email,
+                            name: response.data.name
                         }
                         return user;
                     }
