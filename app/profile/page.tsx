@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
 interface UserData {
@@ -19,12 +19,20 @@ interface UserUpdateDto {
     fechaNac: string;
 }
 
+interface PasswordChangeDto {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}
+
 export default function Profile() {
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState<UserData | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
     const { register, handleSubmit, setValue } = useForm<UserUpdateDto>();
-    const [initialData, setInitialData] = useState<UserData | null>(null); 
+    const { register: registerPassword, handleSubmit: handlePasswordSubmit, reset: resetPasswordForm } = useForm<PasswordChangeDto>();
+    const [initialData, setInitialData] = useState<UserData | null>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -41,7 +49,7 @@ export default function Profile() {
                     setValue("nombre", data.nombre);
                     setValue("apellidos", data.apellidos);
                     setValue("fechaNac", data.fechaNac);
-                    setInitialData(data); 
+                    setInitialData(data);
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }
@@ -70,6 +78,31 @@ export default function Profile() {
             setIsEditing(false);
         } catch (error) {
             console.error("Error updating user data:", error);
+        }
+    };
+
+    const onPasswordChangeSubmit: SubmitHandler<PasswordChangeDto> = async (data) => {
+        if (data.newPassword !== data.confirmNewPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+        try {
+            const token = session?.user.token;
+            await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Account/change-password`, {
+                CurrentPassword: data.currentPassword,
+                NewPassword: data.newPassword,
+                ConfirmNewPassword: data.confirmNewPassword
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            alert("Contraseña cambiada correctamente");
+            setIsChangingPassword(false);
+            resetPasswordForm();
+        } catch (error) {
+            console.error("Error changing password:", error);
+            alert("Ha ocurrido un error al actualizar la contraseña");
         }
     };
 
@@ -130,29 +163,39 @@ export default function Profile() {
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm bg-gray-100"
                     />
                 </div>
-                <div className="flex justify-end space-x-4">
-                    {!isEditing && (
+                <div className="flex flex-col items-end space-x-4 md:flex-row md:justify-end  ">
+                    {!isEditing && !isChangingPassword && (
                         <button
                             type="button"
                             onClick={() => setIsEditing(true)}
-                            className="flex items-center px-4 py-2 bg-webColor text-white rounded-full"
+                            className="flex items-center px-4 py-2 bg-webColor text-white rounded-full mb-2 w-fit"
                         >
                             <PencilIcon className="h-5 w-5 mr-2" />
                             Editar Perfil
+                        </button>
+                    )}
+                    {!isEditing && !isChangingPassword && (
+                        <button
+                            type="button"
+                            onClick={() => setIsChangingPassword(true)}
+                            className="flex items-center px-4 py-2 bg-webColor text-white rounded-full mb-2 w-fit"
+                        >
+                            <LockClosedIcon className="h-5 w-5 mr-2" />
+                            Cambiar Contraseña
                         </button>
                     )}
                     {isEditing && (
                         <>
                             <button
                                 type="submit"
-                                className="flex items-center px-4 py-2 bg-webColor text-white rounded-full"
+                                className="flex items-center px-4 py-2 bg-webColor text-white rounded-full mb-2 w-fit"
                             >
                                 Guardar Cambios
                             </button>
                             <button
                                 type="button"
                                 onClick={onCancel}
-                                className="flex items-center px-4 py-2 bg-gray-300 text-white rounded-full"
+                                className="flex items-center px-4 py-2 bg-gray-300 text-white rounded-full mb-2 w-fit"
                             >
                                 Cancelar
                             </button>
@@ -160,6 +203,49 @@ export default function Profile() {
                     )}
                 </div>
             </form>
+            {isChangingPassword && (
+                <form onSubmit={handlePasswordSubmit(onPasswordChangeSubmit)} className="space-y-4 mt-6">
+                    <div>
+                        <label className="block text-sm font-medium">Contraseña Actual</label>
+                        <input
+                            type="password"
+                            {...registerPassword("currentPassword", { required: true })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Nueva Contraseña</label>
+                        <input
+                            type="password"
+                            {...registerPassword("newPassword", { required: true })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium">Repetir Nueva Contraseña</label>
+                        <input
+                            type="password"
+                            {...registerPassword("confirmNewPassword", { required: true })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+                        />
+                    </div>
+                    <div className="flex justify-end space-x-4">
+                        <button
+                            type="submit"
+                            className="flex items-center px-4 py-2 bg-webColor text-white rounded-full"
+                        >
+                            Guardar Contraseña
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsChangingPassword(false)}
+                            className="flex items-center px-4 py-2 bg-gray-300 text-white rounded-full"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            )}
         </div>
     );
 }
