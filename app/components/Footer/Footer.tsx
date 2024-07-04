@@ -20,11 +20,6 @@ export default function Footer() {
                     </li>
                     <li className="my-2">
                         <a className="text-white text-xl font-normal hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors duration-200" href="#">
-                            Comunidad
-                        </a>
-                    </li>
-                    <li className="my-2">
-                        <a className="text-white text-xl font-normal hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors duration-200" href="#">
                             Acerca De
                         </a>
                     </li>

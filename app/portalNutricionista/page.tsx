@@ -228,7 +228,7 @@ const TablaDesktop = ({ dietas }: {
                                         </td>
                                         <td className="whitespace-nowrap px-6 py-2">
                                             <div className="flex justify-center">
-                                                <HistoricoIcon />
+                                                <HistoricoIcon emailCliente={item.emailCliente}/>
                                             </div>
                                         </td>
                                     </tr>
@@ -277,7 +277,7 @@ const TablaMobile = ({ dietas }: {
                                                 <DetalleIcon id_Dieta={item.id_Dieta}/>
                                             </span>
                                             <span className="">
-                                                <HistoricoIcon />
+                                                <HistoricoIcon emailCliente={item.emailCliente}/>
                                             </span>
 
                                         </div>
@@ -395,11 +395,13 @@ const TablaCliente = ({ clientes, asignados, addCliente, deleteCliente, tokenSes
         </div>);
 }
 
-const HistoricoIcon = () => {
+const HistoricoIcon = ({emailCliente} : {emailCliente : string}) => {
     return (
-        <svg className="w-6 h-6" fill="#388e3c" strokeWidth={1.5} stroke="#388e3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-        </svg>
+        <Link href={`portalNutricionista/historicoDietas?email=${emailCliente}`}>
+            <svg className="w-6 h-6" fill="#388e3c" strokeWidth={1.5} stroke="#388e3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+            </svg>
+        </Link>
     );
 }
 

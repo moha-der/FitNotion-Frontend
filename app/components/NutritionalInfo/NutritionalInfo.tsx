@@ -63,11 +63,11 @@ export default function NutritionalInfo() {
                 {foods.map((food) => (
                     <div key={food.foodId} className="bg-green-50 p-4 rounded-md shadow-md">
                         <h2 className="text-xl font-bold mb-2">{food.label}</h2>
-                        <p><strong>Calorías:</strong> {food.nutrients.ENERC_KCAL}</p>
-                        <p><strong>Proteínas:</strong> {food.nutrients.PROCNT} g</p>
-                        <p><strong>Grasas:</strong> {food.nutrients.FAT} g</p>
-                        <p><strong>Carbohidratos:</strong> {food.nutrients.CHOCDF} g</p>
-                        {food.nutrients.FIBTG !== undefined && <p><strong>Fibra:</strong> {food.nutrients.FIBTG} g</p>}
+                        <p><strong>Calorías:</strong> {food.nutrients.ENERC_KCAL.toFixed(2)}</p>
+                        <p><strong>Proteínas:</strong> {food.nutrients.PROCNT.toFixed(2)} g</p>
+                        <p><strong>Grasas:</strong> {food.nutrients.FAT.toFixed(2)} g</p>
+                        <p><strong>Carbohidratos:</strong> {food.nutrients.CHOCDF.toFixed(2)} g</p>
+                        {food.nutrients.FIBTG !== undefined && <p><strong>Fibra:</strong> {food.nutrients.FIBTG.toFixed(2)} g</p>}
                         {food.brand && <p><strong>Marca:</strong> {food.brand}</p>}
                         {food.category && <p><strong>Categoría:</strong> {food.category}</p>}
                     </div>

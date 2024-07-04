@@ -141,7 +141,7 @@ export default function Panel({ searchParams }: SearchParamProps) {
 
 
   return (
-    <div className='sm:container mx-auto sm:mt-4'>
+    <div className='sm:container mx-auto sm:mt-4 mb-4'>
       <div className='w-full bg-webColor p-4 sm:rounded-xl text-white flex justify-between mb-1'>
         <h3>Resumen Diario</h3>
         <div className='flex flex-row justify-center items-center'>
@@ -173,11 +173,6 @@ export default function Panel({ searchParams }: SearchParamProps) {
                 <div className='flex flex-col items-center'>
                   <span>{Math.ceil(caloriasConsumidas)}</span>
                   <span>Consumido</span>
-                </div>
-                <span className='text-base'>+</span>
-                <div className='flex flex-col items-center'>
-                  <span>1000</span>
-                  <span>Ejercicio</span>
                 </div>
                 <span className='text-base'>=</span>
                 <div className='flex flex-col items-center'>
@@ -273,7 +268,6 @@ export default function Panel({ searchParams }: SearchParamProps) {
       </div>
 
 
-      <ButtonAuth />
     </div>
 
   )

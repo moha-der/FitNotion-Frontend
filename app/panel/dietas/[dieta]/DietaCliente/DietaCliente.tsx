@@ -57,7 +57,7 @@ export default function DietaBox({ idDieta }: { idDieta: string }) {
   const handleNoteSubmit = async () => {
     try {
       if (session) {
-        const isNutricionista = true; 
+        const isNutricionista = false; 
         const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/Dietas/AddNota`, {
           idDieta,
           isNutricionista,

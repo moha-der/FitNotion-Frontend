@@ -5,13 +5,17 @@ import NavLinks from "./NavLinks";
 import Link from "next/link";
 import { Bars3CenterLeftIcon } from '@heroicons/react/24/outline';
 import MobileNav from "./MobileNav";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import userImage from '@/public/images/user.jpeg'
 
 export default function Header() {
     const [isOpenMobileNav, setIsOpenMobileNav] = useState(false);
     const { data: session, status } = useSession();
+
+    const handleLogout = () => {
+        signOut({ callbackUrl: '/login' });
+    };
 
     return (
         <div className="w-screen bg-cardOverlay backdrop-blur-md md:p-3 md:px-4 lg:px-16 shadow-md border-b">
@@ -21,18 +25,27 @@ export default function Header() {
                 <div className="flex flex-row justify-center items-center">
                     <NavLinks Mobile={false} />
                     {status === "authenticated" ? (
-                        <Link href={'/profile'}>
-                            <div className="flex items-center ml-2">
-                                <Image
-                                    src={userImage}
-                                    alt="User Avatar"
-                                    className="rounded-full"
-                                    width={32}
-                                    height={32}
-                                />
-                                <span className="text-xs uppercase text-black font-medium ml-2">Hola, {session.user.email}</span>
-                            </div>
-                        </Link>
+                        <div className="flex flex-row ml-2">
+                            <Link href={'/profile'}>
+                                <div className="flex items-center ml-2">
+                                    <Image
+                                        src={userImage}
+                                        alt="User Avatar"
+                                        className="rounded-full"
+                                        width={32}
+                                        height={32}
+                                    />
+                                    <span className="text-xs uppercase text-black font-medium ml-2">Hola, {session.user.name}</span>
+                                </div>
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="text-xs uppercase text-white font-medium ml-2 px-4 py-2 bg-red-600 rounded-full"
+                            >
+                                Cerrar Sesión
+                            </button>
+                        </div>
+
                     ) : (
                         <Link href={'/login'} className="text-xs uppercase text-white font-medium ml-2 px-4 py-2 bg-webColor rounded-full">Iniciar Sesión</Link>
                     )}

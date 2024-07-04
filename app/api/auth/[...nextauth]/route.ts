@@ -24,7 +24,7 @@ const authOptions = {
                             token: response.data.token,
                             permiso: response.data.permiso,
                             email: response.data.email,
-                            name: response.data.name
+                            name: response.data.nombre
                         }
                         return user;
                     }
