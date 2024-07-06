@@ -1,4 +1,3 @@
-// lib/api.js
 import axios from 'axios';
 
 const API_URL = 'https://wger.de/api/v2';

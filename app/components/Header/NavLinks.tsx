@@ -6,7 +6,7 @@ const links = [
     { name: 'Inicio', href: '/' },
     { name: 'Alimentos', href: '/alimentos' },
     { name: 'Ejercicio', href: '/ejercicio' },
-    { name: 'Acerca De', href: '/acerca' },
+    { name: 'Acerca De', href: '/about' },
 ];
 
 export default function NavLinks({

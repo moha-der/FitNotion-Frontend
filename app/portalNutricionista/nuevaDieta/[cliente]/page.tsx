@@ -179,7 +179,7 @@ export default function NuevaDieta({ params }: { params: { cliente: string}}){
   );
 
   return (
-    <div className="p-8">
+    <div className="container mx-auto mt-12 mb-12 p-4 md:p-0">
       <h1 className="text-2xl font-bold mb-6">Crear Nueva Dieta</h1>
       {(['desayuno', 'comida', 'almuerzo', 'merienda', 'cena'] as MealType[]).map((mealType) => (
         <div key={mealType} className="mb-6">

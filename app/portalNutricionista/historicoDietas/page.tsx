@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 interface DietaHistorico {
     fechaCreacion: string;
-    activo: boolean;
+    activo: string;
     nutricionista: string;
     idDieta: number;
 }
@@ -52,7 +52,8 @@ const TablaHistoricoPorEmail = ({ searchParams }: SearchParamProps) => {
     }
 
     return (
-        <div className="container mx-auto">
+        <div className="container mx-auto mt-12 mb-4">
+            <div className=" flex justify-between border-b-2 px-4 py-2 bg-webColor md:rounded-t-xl text-white"><span>{decodeURIComponent(email as string)}</span></div>
             <div className="hidden md:flex flex-col">
                 <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -69,8 +70,8 @@ const TablaHistoricoPorEmail = ({ searchParams }: SearchParamProps) => {
                                     {historico.length > 0 ? historico.map((item, index) => (
                                         <tr key={index} className="border-b border-neutral-200">
                                             <td className="whitespace-nowrap px-6 py-2">{new Date(item.fechaCreacion).toLocaleDateString()}</td>
-                                            <td className="whitespace-nowrap px-6 py-2">{item.activo ? 'Sí' : 'No'}</td>
-                                            <td className="whitespace-nowrap px-6 py-2">
+                                            <td className="whitespace-nowrap px-6 py-2">{(item.activo === 'S') ? 'Sí' : 'No'}</td>
+                                            <td className="whitespace-nowrap px-6 py-2 flex flex-col items-center justify-center">
                                                 <Link href={`dietas/${item.idDieta}`}>
                                                     <svg className="w-6 h-6" fill="#388e3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                                         <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
@@ -91,7 +92,7 @@ const TablaHistoricoPorEmail = ({ searchParams }: SearchParamProps) => {
                 </div>
             </div>
 
-            <div className="flex flex-col md:hidden">
+            <div className="flex flex-col md:hidden mb-28">
                 <div className="overflow-x-auto">
                     <div className="inline-block min-w-full py-2">
                         <div className="overflow-hidden">
@@ -107,7 +108,7 @@ const TablaHistoricoPorEmail = ({ searchParams }: SearchParamProps) => {
                                     {historico.length > 0 ? historico.map((item, index) => (
                                         <tr key={index} className="border-b border-neutral-200">
                                             <td className="whitespace-nowrap px-6 py-2">{new Date(item.fechaCreacion).toLocaleDateString()}</td>
-                                            <td className="whitespace-nowrap px-6 py-2">{item.activo ? 'Sí' : 'No'}</td>
+                                            <td className="whitespace-nowrap px-6 py-2">{(item.activo === 'S') ? 'Sí' : 'No'}</td>
                                             <td className="whitespace-nowrap px-6 py-2">
                                                 <Link href={`dietas/${item.idDieta}`}>
                                                     <svg className="w-6 h-6" fill="#388e3c" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

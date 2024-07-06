@@ -18,8 +18,6 @@ interface SearchResult {
     };
 }
 
-const API_ID = 'de378d1f';
-const API_KEY = '4c03d8d168a893312398253db520be1b';
 
 
 export default function SearchResult({
@@ -49,7 +47,7 @@ export default function SearchResult({
         const fetchData = async () => {
             try {
                 const query = value;
-                const response = await axios.get(`https://api.edamam.com/api/food-database/v2/parser?app_id=${API_ID}&app_key=${API_KEY}&ingr=${query}&nutrition-type=logging`);
+                const response = await axios.get(`https://api.edamam.com/api/food-database/v2/parser?app_id=${process.env.NEXT_PUBLIC_EDAMAM_API_ID}&app_key=${process.env.NEXT_PUBLIC_EDAMAM_API_KEY}&ingr=${query}&nutrition-type=logging`);
                 setSearchResult(response.data.hints);
             } catch (error) {
                 console.error("Error fetching data:", error);
