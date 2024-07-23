@@ -86,8 +86,12 @@ export default function Login() {
                             <span className="w-full">Inicia sesión</span>
                         </button>
                     </form>
-                    
-                    <div className="pt-12 pb-12 text-center">
+                    <div className="pt-12 pb-2 text-center">
+                        <p>¿Has olvidado la contraseña?
+                            <Link href="/forgotPassword" className="font-semibold underline ml-1">¡Recuperar ahora!</Link>
+                        </p>
+                    </div>
+                    <div className="pt-4 pb-12 text-center">
                         <p>¿Todavía no eres usuario?
                             <Link href="/register" className="font-semibold underline ml-1">¡Regístrate ahora!</Link>
                         </p>

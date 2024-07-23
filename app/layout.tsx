@@ -13,7 +13,9 @@ export default function RootLayout({
       <body className='bg-gray-50'>
         <SessionAuthProvider>
         <Header/>
-        {children}
+        <div className="content">
+            {children}
+          </div>
         <Footer/>
         </SessionAuthProvider>
       </body>
